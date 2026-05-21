@@ -459,17 +459,16 @@ El sistema UN Wheels aplica el **Web Application Firewall (WAF) Pattern**. El si
 
 ### 4.5 Pruebas de Verificación
 
-#### 1. Interceptación de Datos
 
-Empleando una herramienta de captura de paquetes (Wireshark), se interceptó el tráfico de red entre el cliente y el componente unwheels-web-frontend. Los paquetes capturados muestran que toda la información transmitida se encuentra cifrada, confirmando que los datos en tránsito están adecuadamente protegidos.
+#### 1. Reverse Proxy (Superficie Pública y Hardening Centralizado)
 
-#### 2. Peticiones Ping entre Contenedores
+Se ejecutó una verificación automatizada comparando dos escenarios: **(1) sin reverse proxy** y **(2) con reverse proxy activo**. En el escenario *before*, se expusieron directamente al host el Frontend SSR (`:3000`) y el API Gateway (`:8080`), aumentando la superficie pública y permitiendo inferir la tecnología del backend desde cabeceras como `X-Powered-By`.
 
-Se realizaron pruebas de conectividad entre los contenedores desplegados, registrando tanto intentos exitosos como fallidos. Los resultados demuestran que la segmentación de red aísla efectivamente las capas de datos, servicios y orquestación, permitiendo el acceso únicamente entre componentes autorizados conforme a la configuración de las redes privadas.
+En el escenario *after*, el acceso directo al puerto del frontend queda bloqueado y la entrada pública se concentra en el proxy (ej. `https://localhost:8080`), ocultando el *fingerprint* del backend y aplicando *hardening* centralizado mediante cabeceras de seguridad (HSTS, `X-Frame-Options`, `X-Content-Type-Options`, etc.).
 
-#### 3. Simulación de Ataque DoS
+![Reverse Proxy Test — BEFORE (sin proxy)](./imgs/Before_test_RP.png)
 
-Un script automatizado ejecutó múltiples peticiones concurrentes dirigidas al componente unwheels-web-frontend, simulando un ataque de Denegación de Servicio (DoS). Los resultados de la prueba muestran que el sistema bloquea el acceso desde la fuente originaria y devuelve un mensaje de advertencia, confirmando que el mecanismo de defensa configurado en el WAF se activó exitosamente.
+![Reverse Proxy Test — AFTER (con proxy)](./imgs/After_test_RP.png)
 
 ---
 
