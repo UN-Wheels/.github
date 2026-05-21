@@ -277,75 +277,233 @@ El sistema se despliega en un único nodo Docker Host (LAN PC) ejecutando Docker
 
 </div>
 
-#### Descripción de Elementos Arquitectónicos y Relaciones
+# 1. Descripción de elementos arquitectónicos y relaciones
 
-El sistema está organizado en cinco niveles (tiers). La relación entre niveles es de tipo **"allowed to use"**: un nivel superior tiene permitido usar los servicios del nivel inmediatamente inferior, pero nunca al revés. Esta restricción impone la dirección de dependencia y garantiza la separación de responsabilidades característica de la arquitectura en capas.
+## Tier de Seguridad: `rp-web` (nginx:1.27-alpine)
 
-**Nivel 1 — Presentación**
-
-| Elemento              | Tecnología                        | Lenguaje   | Capas Internas                                                                                                                                                                                                   |
-| --------------------- | --------------------------------- | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **1.1 Cliente Web**   | Next.js 15 + React + Tailwind CSS | TypeScript | L1: Pages / Middleware SSR (rutas protegidas), L2: Componentes React (UI reactiva), L3: Lógica de Negocio Cliente (React Query, contextos globales), L4: Acceso a Datos (HTTP/REST + Socket.IO Client → Gateway) |
-| **1.2 Cliente Móvil** | Flutter 3.x                       | Dart       | L1: Screens / UI (widgets Flutter), L2: Lógica de Presentación (Provider/Bloc, gestión de estado), L3: Dominio (casos de uso, modelos independientes de UI), L4: Acceso a Datos (repositorios → Gateway)         |
-
-_Relación con Nivel 2:_ Nivel 1 **allowed to use** Nivel 2. Los clientes únicamente pueden invocar servicios expuestos por el API Gateway; no tienen visibilidad directa sobre los microservicios del Nivel 3 ni sobre capas inferiores.
-
-**Nivel 2 — Gateway**
-
-| Elemento        | Tecnología          | Capas Internas                                                                                                                                                                                                                                                                         |
-| --------------- | ------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **API Gateway** | NestJS / TypeScript | L1: Entrada pública (endpoints externos, CORS, cookies HttpOnly), L2: Proxy y enrutamiento (pathRewrite, proxy WebSocket transparente), L3: Middleware (validación JWT, Helmet, gestión de sesiones), L4: Integración (enriquecimiento de respuestas, comunicación con microservicios) |
-
-_Relación con Nivel 3:_ Nivel 2 **allowed to use** Nivel 3. El Gateway puede enrutar peticiones hacia los microservicios lógicos; los microservicios no conocen ni dependen del Gateway.
-
-**Nivel 3 — Lógica**
-
-Cada servicio lógico sigue una arquitectura interna en capas:
-
-| Elemento                       | Tecnología | Lenguaje   | L1 (API)                                     | L2 (Aplicación)                                    | L3 (Dominio)                         | L4 (Infraestructura)          |
-| ------------------------------ | ---------- | ---------- | -------------------------------------------- | -------------------------------------------------- | ------------------------------------ | ----------------------------- |
-| **3.1 unwheels-auth**          | FastAPI    | Python     | REST API (routers FastAPI)                   | Application (lógica de auth, JWT)                  | User, Vehicle (schemas Pydantic)     | PostgreSQL (SQLAlchemy)       |
-| **3.2 unwheels-routes**        | Express.js | JavaScript | REST API (routes Express)                    | Application (control de cupos, estados de reserva) | Route, Reservation, AvailabilityRule | MongoDB (Mongoose) + AMQP     |
-| **3.3 unwheels-chat**          | NestJS     | TypeScript | Socket.IO Gateway + REST Controller          | Application (permisos, historial)                  | Conversation, Message                | MongoDB (Mongoose) + AMQP     |
-| **3.4 unwheels-notifications** | NestJS     | TypeScript | AMQP Consumer + REST Controller + WS Gateway | Application (persistencia y entrega)               | Notification                         | MongoDB (Mongoose)            |
-| **3.5 unwheels-search**        | Gin        | Go         | REST Handler (Gin)                           | Application (sincronización y búsqueda)            | Route (proyección de lectura)        | PostgreSQL + PostGIS (pgx/v5) |
-
-**Flujo de eventos (Publica / Suscribe):**
-
-- unwheels-routes publica: `reservation.requested`, `reservation.accepted`, `reservation.rejected`, `route.deleted`
-- unwheels-chat publica: `chat.message`
-- unwheels-notifications consume (bindings): `reservation.#`, `route.#`, `chat.#`
-
-_Relación con Nivel 4:_ Nivel 3 **allowed to use** Nivel 4. Los servicios lógicos pueden publicar y consumir mensajes del broker asíncrono; el broker no tiene conocimiento de la lógica de negocio de los servicios.
-
-**Nivel 4 — Comunicación Asíncrona**
-
-| Elemento                              | Tecnología                     | Descripción                                                                                                                                                                 |
-| ------------------------------------- | ------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **RabbitMQ 3.13** (unwheels-rabbitmq) | AMQP 0.9.1 + Management Plugin | Topic exchange `uniwheels.events` (durable). Cola: `notifications_queue` (durable, bindings: `reservation.#`, `route.#`, `chat.#`). Dead Letter Queue: `notifications.dlq`. |
-
-_Relación con Nivel 5:_ Nivel 3 **allowed to use** Nivel 5 (acceso directo desde los servicios lógicos a sus datastores). El Nivel 4 (broker) no accede directamente a los datos; actúa únicamente como intermediario de mensajería.
-
-**Nivel 5 — Datos**
-
-| Elemento                 | Tecnología                  | Tipo               | Descripción                                                                                                                         |
-| ------------------------ | --------------------------- | ------------------ | ----------------------------------------------------------------------------------------------------------------------------------- |
-| **5.1 auth-db**          | PostgreSQL 16               | Relacional (SQL)   | Tablas: users, vehicles. Integridad referencial, transacciones ACID. Accedido mediante SQLAlchemy ORM.                              |
-| **5.2 routes-db**        | MongoDB 7                   | Documental (NoSQL) | Colecciones: routes, reservations, availability_rules. Esquemas flexibles con reglas de disponibilidad. Accedido mediante Mongoose. |
-| **5.3 chat-db**          | MongoDB 7                   | Documental (NoSQL) | Colecciones: conversations, messages. Patrón append-only, alta tasa de escritura. Accedido mediante Mongoose.                       |
-| **5.4 notifications-db** | MongoDB 7                   | Documental (NoSQL) | Colección: notifications. TTL de 30 días, índice compuesto `{recipientEmail, read, createdAt}`. Accedido mediante Mongoose.         |
-| **5.5 search-db**        | PostgreSQL 16 + PostGIS 3.4 | Geoespacial (SQL)  | Proyección de lectura de rutas. Columnas GEOGRAPHY, índice GiST para `ST_DWithin`, `ST_Distance`. Accedido mediante pgx/v5.         |
-
-#### Descripción de Patrones Arquitectónicos
-
-| Patrón                                       | Aplicación                                                                                                                                                                                                                                                                                                                                                                 |
-| -------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Arquitectura en Capas (N-Tier)**           | El sistema impone una separación estricta en cinco niveles: Presentación → Gateway → Lógica → Comunicación Asíncrona → Datos. Cada nivel depende únicamente del nivel directamente inferior, garantizando separación de responsabilidades.                                                                                                                                 |
-| **Clean Architecture / Hexagonal (parcial)** | Cada microservicio (Nivel 3) sigue internamente una arquitectura de cuatro capas: API (adaptadores de entrada) → Aplicación (lógica de negocio) → Dominio (entidades) → Infraestructura (adaptadores de salida). La lógica de dominio no tiene dependencias de frameworks. Aplicado especialmente en unwheels-chat y unwheels-notifications mediante el patrón Repository. |
-| **CQRS-Adjacent (Read Model Segregation)**   | unwheels-search mantiene una proyección de lectura optimizada en PostGIS, sincronizada periódicamente con routes-db. Las escrituras van a unwheels-routes y las consultas geoespaciales a unwheels-search, separando patrones de acceso incompatibles.                                                                                                                     |
-| **Asynchronous Messaging Pattern**           | RabbitMQ (Nivel 4) desacopla los servicios productores del consumidor. Los servicios de Nivel 3 publican eventos de dominio sin conocer a los consumidores; los mensajes son durables, garantizando entrega incluso si el consumidor está temporalmente caído.                                                                                                             |
+Actúa como único punto de entrada público para el tráfico web. Combina las funciones de proxy inverso y Web Application Firewall, protegiendo toda la infraestructura interna del sistema.
 
 ---
+
+## Tier de Presentación
+
+Agrupa los dos clientes del sistema: la aplicación web y la aplicación móvil.
+
+### `unwheels-front-web` (Next.JS)
+
+La interfaz web implementa Server-Side Rendering (SSR) sobre Next.js. Al ser un componente de presentación, su estructura interna de capas se gestiona a nivel de frontend y se comunica con el backend a través del API Gateway.
+
+### `unwheels-front-mobile` (Flutter / Dart)
+
+La aplicación móvil nativa desarrollada en Flutter/Dart. Se comunica con el backend a través del proxy inverso móvil (`rp-mobile`) y el API Gateway.
+
+---
+
+## Tier Edge: `rp-mobile` (nginx:1.27-alpine)
+
+Proxy inverso dedicado exclusivamente al tráfico del cliente móvil. Expone el punto de entrada público para la aplicación Flutter y oculta el API Gateway del exterior.
+
+---
+
+## Tier de Integración: `unwheels-api-gateway` (NestJS)
+
+Punto de entrada unificado para todo el tráfico de backend. Enruta las peticiones, aplica políticas de autenticación/autorización y coordina la comunicación con los microservicios internos.
+
+---
+
+## Tier de Lógica: Microservicios de negocio
+
+Agrupa los cinco microservicios del dominio del sistema, cada uno con su propia arquitectura de capas interna.
+
+### `unwheels-auth` (FastAPI)
+
+Servicio de autenticación y gestión de usuarios. Su estructura interna se organiza en cuatro capas:
+
+#### Capa de Entrada (Endpoints)
+
+Expone los endpoints REST para login, validación de token y gestión de usuarios. Recibe las peticiones provenientes del API Gateway.
+
+#### Capa de Dominio (Schemas/DTOs)
+
+Define los esquemas de datos y objetos de transferencia que estructuran la información entre capas.
+
+#### Capa de Acceso a Datos (CRUD)
+
+Gestiona las operaciones de lectura y escritura sobre la base de datos de autenticación (`auth-db/PostgreSQL`).
+
+#### Capa de Persistencia (Models/DB)
+
+Define los modelos de datos y gestiona la conexión directa con la base de datos.
+
+---
+
+### `unwheels-routes` (Express)
+
+Servicio de gestión de rutas y reservas. Su estructura interna se organiza en cuatro capas:
+
+#### Capa de Red (Routes)
+
+Define las rutas HTTP del servicio y dirige las peticiones entrantes hacia los controladores correspondientes.
+
+#### Capa de Entrada (Controllers)
+
+Recibe y valida las peticiones HTTP, delegando la lógica de negocio a la capa de servicios.
+
+#### Capa de Negocio (Services)
+
+Implementa la lógica de negocio para creación y gestión de rutas, control de cupos y reservas.
+
+#### Capa de Persistencia (Models)
+
+Define los modelos de datos y gestiona la conexión con `routes-db` (MongoDB).
+
+---
+
+### `unwheels-chat` (NestJS)
+
+Microservicio especializado en comunicación bidireccional y mensajería entre usuarios con reservas activas. Su estructura interna se organiza en cuatro capas:
+
+#### Capa de Entrada (Socket.IO + HTTP)
+
+Gestiona las conexiones WebSocket entrantes a través de Socket.IO y las peticiones HTTP convencionales.
+
+#### Capa de Negocio (Service)
+
+Encapsula la lógica de negocio del chat: envío, recepción y gestión de mensajes entre usuarios.
+
+#### Capa de Acceso a Datos (Repositories + Interfaces)
+
+Abstrae el acceso a los datos del chat mediante repositorios e interfaces definidas.
+
+#### Capa de Persistencia (Schemas)
+
+Define los esquemas Mongoose y gestiona la conexión con `chat-db` (MongoDB).
+
+---
+
+### `unwheels-notifications` (NestJS)
+
+Servicio encargado de gestionar y entregar notificaciones en tiempo real. Su estructura interna presenta dos flujos paralelos:
+
+#### Capa de Escucha (RabbitMQ)
+
+Configura y gestiona la conexión con RabbitMQ para el consumo asíncrono de eventos de notificación mediante AMQP.
+
+#### Capa de Reacción (Handlers)
+
+Procesa los eventos recibidos desde RabbitMQ y determina la acción de notificación a ejecutar.
+
+#### Capa HTTP (Controller)
+
+Gestiona las peticiones HTTP directas al servicio de notificaciones.
+
+#### Capa de Negocio (Service)
+
+Coordina la lógica de entrega de notificaciones a los clientes conectados.
+
+#### Capa de Entrega (Socket.IO)
+
+Envía las notificaciones en tiempo real a los clientes web y móvil a través de WebSocket.
+
+#### Capa de Persistencia (Schema/DB)
+
+Define los esquemas y gestiona la conexión con `notifications-db` (MongoDB).
+
+---
+
+### `unwheels-search` (Go/Gin)
+
+Servicio encargado de la búsqueda geoespacial de rutas disponibles. Su estructura interna se organiza en cinco capas:
+
+#### Punto de Entrada (Cmd)
+
+Inicializa la aplicación Go, configura el servidor Gin y arranca el servicio.
+
+#### Capa de Entrada (Handler)
+
+Recibe y valida las peticiones HTTP de búsqueda, extrayendo los parámetros de consulta.
+
+#### Capa de Sincronización/Negocio (Sync)
+
+Implementa la lógica de negocio geoespacial, coordinando la sincronización de datos y la ejecución de las consultas de búsqueda.
+
+#### Capa de Acceso a Datos (Repository)
+
+Abstrae el acceso a la base de datos geoespacial mediante el patrón repositorio.
+
+#### Capa de Persistencia (Model/DB)
+
+Define los modelos de datos y gestiona la conexión con `search-db` (PostgreSQL + PostGIS).
+
+---
+
+## Tier de Comunicación Asíncrona: `unwheels-rabbitmq` (RabbitMQ)
+
+Broker de mensajes que desacopla al productor (`unwheels-routes`) del consumidor (`unwheels-notifications`), permitiendo que las notificaciones se procesen de forma asíncrona sin bloquear la transacción principal de reserva.
+
+---
+
+## Tier de Datos
+
+Zona de persistencia del sistema. Solo los microservicios correspondientes pueden interactuar con sus repositorios de datos. El sistema utiliza una estrategia de base de datos por servicio (*Database per Service*):
+
+- `routes-db` (MongoDB): Almacena los datos de rutas y reservas del servicio `unwheels-routes`.
+- `chat-db` (MongoDB): Almacena el historial de mensajes del servicio `unwheels-chat`.
+- `notifications-db` (MongoDB): Almacena el registro de notificaciones del servicio `unwheels-notifications`.
+- `search-db` (PostgreSQL + PostGIS): Base de datos relacional con capacidades geoespaciales para el servicio `unwheels-search`.
+- `auth-db` (PostgreSQL): Base de datos relacional para la gestión de usuarios y credenciales del servicio `unwheels-auth`.
+
+---
+
+# 2. Relaciones entre tiers
+
+Las relaciones entre tiers siguen el principio de separación por responsabilidad, donde cada tier únicamente se comunica con los tiers autorizados:
+
+## Flujo Web
+
+El Tier de Seguridad (`rp-web`) recibe las peticiones del exterior, las inspecciona y las reenvía al Tier de Presentación (`unwheels-front-web`). El frontend web, a su vez, consume datos del Tier de Orquestación (`unwheels-api-gateway`) vía HTTP REST.
+
+## Flujo Móvil
+
+El Tier de Presentación (`unwheels-front-mobile`) se comunica con el Tier Edge (`rp-mobile`), que reenvía de forma segura las peticiones al Tier de Orquestación (`unwheels-api-gateway`).
+
+## Flujo de Backend
+
+El Tier de Orquestación enruta las peticiones directamente a los microservicios del Tier de Lógica (`unwheels-auth`, `unwheels-routes`, `unwheels-chat`, `unwheels-notifications`, `unwheels-search`) según el tipo de operación solicitada.
+
+## Flujo Asíncrono
+
+`unwheels-routes` publica eventos en el Tier de Comunicación Asíncrona (`unwheels-rabbitmq`), que son consumidos por `unwheels-notifications` para la entrega de notificaciones en tiempo real, desacoplando ambos servicios.
+
+## Flujo de Datos
+
+Cada microservicio del Tier de Lógica accede únicamente a su propia base de datos en el Tier de Datos, siguiendo el patrón *Database per Service*.
+
+---
+
+# 3. Patrones arquitectónicos utilizados
+
+## Arquitectura en Capas (Layered Architecture)
+
+Todos los microservicios del sistema siguen el principio de diseño en capas, separando claramente las responsabilidades de entrada, dominio/negocio, acceso a datos y persistencia. Esto promueve la modularidad, la capacidad de prueba independiente y los límites claros entre lógica y tecnología en cada servicio.
+
+---
+
+## Patrón Database per Service
+
+Cada microservicio gestiona su propia base de datos de forma independiente, sin compartir almacenamiento con otros servicios. Esto garantiza el acoplamiento débil en la capa de datos y permite que cada servicio elija el motor de base de datos más adecuado para su dominio (MongoDB para datos no relacionales de chat, rutas y notificaciones; PostgreSQL/PostGIS para búsquedas geoespaciales y autenticación).
+
+---
+
+## Patrón Broker de Mensajes (Publish-Subscribe)
+
+El Tier de Comunicación Asíncrona (`RabbitMQ`) implementa el patrón Publish-Subscribe entre `unwheels-routes` (productor) y `unwheels-notifications` (consumidor). Este desacoplamiento garantiza que la finalización de una reserva pueda disparar notificaciones sin bloquear la transacción principal ni generar dependencias directas entre microservicios.
+
+---
+
+## Patrón Gateway + Socket.IO (Event-Driven dentro del servicio)
+
+Tanto `unwheels-chat` como `unwheels-notifications` implementan internamente una arquitectura orientada a eventos usando Socket.IO como gateway de comunicación en tiempo real, permitiendo la entrega de mensajes y notificaciones de forma reactiva hacia los clientes conectados.
 
 ### 3.4 Estructura de Descomposición
 
