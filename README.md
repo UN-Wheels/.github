@@ -68,24 +68,36 @@ La arquitectura sigue un patrón de microservicios distribuidos con cinco lengua
 
 </div>
 
+El sistema implementa una arquitectura orientada a microservicios, donde cada dominio de negocio está aislado y gestiona su propia persistencia. La comunicación entre estos servicios se rige por un modelo de Mensajería Asíncrona (Event-Driven Architecture) para procesos en segundo plano, y un API Gateway como punto unificado para solicitudes síncronas. El sistema soporta múltiples plataformas cliente (Web Front End y Mobile Device Front End) que consumen este backend compartido.
+A nivel de infraestructura y seguridad, el sistema adopta un enfoque de Defensa en Profundidad (Defense in Depth). La arquitectura se basa en una estricta Segmentación de Red dividida en 5 zonas aisladas (compartimentos estancos). Adicionalmente, implementa el patrón de Reverse Proxy con capacidades de Web Application Firewall (WAF) integradas en el mismo componente, operando como una frontera inteligente que inspecciona, filtra y enruta todo el tráfico público antes de que alcance las redes internas.
+
+
 #### Descripción de Elementos Arquitectónicos y Relaciones
 
 ##### Componentes
 
-**Componentes de Presentación**
+**Capa Edge**
+
+Es la única zona expuesta al mundo exterior (Internet/Host). Aloja los Reverse Proxies, que fungen simultáneamente como enrutadores y firewalls perimetrales (ModSecurity + OWASP CRS embebido).
+
+| Componente | Puerto | Descripción |
+|---|---|---|---|
+| **rp-web** | 8080 | Reverse proxy dedicado al cliente web. Enruta el tráfico de páginas hacia el frontend y las conexiones WebSocket directamente al API Gateway. Posee políticas de seguridad flexibles adaptadas a navegadores (ej. permite cargas de hasta 10 MB y admite contenido multipart/form-data para subida de imágenes) e implementa Rate Limiting. |
+| **rp-mobile** | 8081 | Reverse proxy dedicado a la aplicación móvil. Enruta el tráfico exclusivamente hacia el API Gateway. Posee un perfil de seguridad sumamente estricto, diseñado para una API pura (límite de carga de 5 MB y aceptación exclusiva de peticiones en formato JSON). |
+
+**Capa Web-Zone**
 
 | Componente | Tecnología | Lenguaje | Descripción |
-|---|---|---|---|
-| **unwheels-front-web** | Next.js 15 + React + Tailwind CSS (SSR) | TypeScript | Cliente web con Renderizado en el Servidor. Gestiona rutas protegidas mediante middleware SSR. Usa React Query para caché de datos y Socket.IO Client para chat y notificaciones en tiempo real. Se comunica con el sistema exclusivamente a través del API Gateway. |
-| **unwheels-front-mobile** | Flutter 3.x + Provider/Bloc | Dart | Aplicación móvil nativa para Android. Replica la funcionalidad del cliente web en un formato optimizado para dispositivos móviles. Consume los mismos endpoints del backend a través del API Gateway. |
-
-**Componente Gateway**
-
-| Componente | Tecnología | Descripción |
 |---|---|---|
-| **unwheels-api-gateway** | NestJS + TypeScript (Node.js, puerto 8080) | Punto de entrada único para todo el tráfico externo (norte-sur). Valida tokens JWT mediante un guard global, gestiona cookies HttpOnly, enruta peticiones hacia los microservicios, enriquece respuestas (reemplaza IDs por objetos completos de usuario/vehículo) y hace proxy transparente de conexiones WebSocket hacia chat-service y notifications-service. |
+| **unwheels-frontweb** | NextJS | TypeScript | Aplicación encargada del renderizado del lado del servidor (SSR) y de la interfaz de usuario web. Reside en una red aislada a la que solo el rp-web tiene acceso, impidiendo la comunicación directa desde cualquier otra fuente. |
 
-**Componentes Lógicos**
+**Capa Gateway-Zone**
+
+| Componente | Tecnología | Lenguaje | Descripción |
+|---|---|---|
+| **unwheels-api-gateway** | NodeJS | TypeScript | Orquestador principal de la API. Coordina, enruta y consolida las peticiones recibidas hacia los microservicios correspondientes. Recibe tráfico validado directamente desde rp-mobile, solicitudes internas desde el unwheels-front-web, y conexiones WebSocket enviadas por el rp-web. |
+
+**Capa Services**
 
 | Componente | Tecnología | Lenguaje | Puerto | Descripción |
 |---|---|---|---|---|
@@ -117,11 +129,17 @@ La arquitectura sigue un patrón de microservicios distribuidos con cinco lengua
 
 | Conector | Tipo | Protocolo | Endpoints | Dirección |
 |---|---|---|---|---|
-| REST (Auth) | Llamada a Procedimiento | HTTP/JSON | `/api/auth/*` | Cliente → Gateway → unwheels-auth |
-| REST (Routes) | Llamada a Procedimiento | HTTP/JSON | `/api/routes/*`, `/api/reservations/*`, `/api/vehicles/*` | Cliente → Gateway → unwheels-routes |
-| REST (Notifications) | Llamada a Procedimiento | HTTP/JSON | `/api/notifications/*` | Cliente → Gateway → unwheels-notifications |
-| REST (Search) | Llamada a Procedimiento | HTTP/JSON | `/api/search/*` | Cliente → Gateway → unwheels-search |
-| REST (Chat HTTP) | Llamada a Procedimiento | HTTP/JSON | `/api/chat/*` | Cliente → Gateway → unwheels-chat |
+| Cliente Web → Reverse Proxy Web (WAF) | Llamada a Procedimiento | HTTPS | `rp-web:8080` | Bidireccional: Cliente (Navegador Web) → rp-web |
+| Cliente Mobile → Reverse Proxy Mobile (WAF) | Llamada a Procedimiento | HTTPS | `rp-mobile:8081` | Bidireccional:  Cliente (App Mobile)  → rp-mobile |
+| Cliente Web → Gateway (WebSocket bypass) | Evento | WSS | `/api/` | Bidireccional: Cliente (Navegador Web)  → Gateway |
+| Reverse Proxy Web → Frontend Web | Proxy HTTP Interno | HTTP | `rp-web` | Unidireccional:  rp-web → Frontend SSR Container |
+| Frontend Web → API Gateway | Llamada a Procedimiento | HTTP REST | `/api/` | Bidireccional: Frontend → Gateway |
+| Reverse Proxy Mobile → API Gateway | Proxy HTTP Seguro | HTTP REST | `rp-mobile`, `/api/`| Bidireccional: rp-mobile → Gateway | 
+| REST (Auth) | Llamada a Procedimiento | HTTP/JSON | `/api/auth/*` | Bidireccional: Cliente → Gateway → unwheels-auth |
+| REST (Routes) | Llamada a Procedimiento | HTTP/JSON | `/api/routes/*`, `/api/reservations/*`, `/api/vehicles/*` | Bidireccional: Cliente → Gateway → unwheels-routes |
+| REST (Notifications) | Llamada a Procedimiento | HTTP/JSON | `/api/notifications/*` | Bidireccional: Cliente → Gateway → unwheels-notifications |
+| REST (Search) | Llamada a Procedimiento | HTTP/JSON | `/api/search/*` | Bidireccional: Cliente → Gateway → unwheels-search |
+| REST (Chat HTTP) | Llamada a Procedimiento | HTTP/JSON | `/api/chat/*` | Bidireccional: Cliente → Gateway → unwheels-chat |
 | WebSocket/Socket.IO (Chat) | Evento | WS + Socket.IO | `/api/chat/socket.io` | Bidireccional: Cliente ↔ Gateway (proxy) ↔ unwheels-chat (namespace `/`) |
 | WebSocket/Socket.IO (Notif.) | Evento | WS + Socket.IO | `/api/notifications/socket.io` | Servidor → Cliente: Gateway (proxy) ↔ unwheels-notifications (namespace `/notifications`) |
 
@@ -129,9 +147,9 @@ La arquitectura sigue un patrón de microservicios distribuidos con cinco lengua
 
 | Conector | Tipo | Protocolo | Routing Keys | Publicador → Consumidor |
 |---|---|---|---|---|
-| AMQP (Eventos de Reserva) | Evento (Pub/Sub) | AMQP 0.9.1 | `reservation.requested`, `reservation.accepted`, `reservation.rejected` | unwheels-routes → unwheels-rabbitmq → unwheels-notifications |
-| AMQP (Eventos de Ruta) | Evento (Pub/Sub) | AMQP 0.9.1 | `route.deleted` | unwheels-routes → unwheels-rabbitmq → unwheels-notifications |
-| AMQP (Eventos de Chat) | Evento (Pub/Sub) | AMQP 0.9.1 | `chat.message` | unwheels-chat → unwheels-rabbitmq → unwheels-notifications |
+| AMQP (Eventos de Reserva) | Unidireccional: Evento (Pub/Sub) | AMQP 0.9.1 | `reservation.requested`, `reservation.accepted`, `reservation.rejected` | unwheels-routes → unwheels-rabbitmq → unwheels-notifications |
+| AMQP (Eventos de Ruta) | Unidireccional: Evento (Pub/Sub) | AMQP 0.9.1 | `route.deleted` | unwheels-routes → unwheels-rabbitmq → unwheels-notifications |
+| AMQP (Eventos de Chat) | Unidireccional: Evento (Pub/Sub) | AMQP 0.9.1 | `chat.message` | unwheels-chat → unwheels-rabbitmq → unwheels-notifications |
 
 **Conectores de Acceso a Datos**
 
@@ -334,12 +352,14 @@ El sistema se descompone en siete módulos funcionales, cada uno responsable de 
 
 #### Escenario 1 – Interceptación No Autorizada y Compromiso del Enlace de Red
 
-- **Source:** Cualquier actor malicioso que intente interceptar o alterar la comunicación entre el cliente web y el sistema.
-- **Stimulus:** Intentos de realizar *sniffing* o ataques *man-in-the-middle* durante el intercambio de información con el frontend web.
-- **Artifact:** Canal de comunicación entre el cliente web y el componente frontend.
-- **Environment:** Operación normal.
-- **Response:** El sistema protege la información intercambiada y verifica la autenticidad de las partes en comunicación.
-- **Response measure:** Los datos interceptados son ilegibles e inutilizables, y cualquier modificación es detectada y rechazada.
+- **Source:** Atacante pasivo o activo con acceso a la red por la cual viajan las peticiones del usuario, red Wi-Fi universitaria compartida, red del ISP o nodo intermedio comprometido, capaz de ejecutar ataques MITM o de capturar tráfico.
+- **Stimulus:** Intentos de realizar *sniffing* o ataques *man-in-the-middle* durante el intercambio de información con el frontend web. El atacante intercepta el tráfico entre un cliente (frontend web o aplicación móvil) con el objetivo de: (a) capturar la cookie access_token HttpOnly que autentica la sesión, (b) leer datos de ubicación geográfica (latitud/longitud) transmitidos al buscar o publicar rutas, o (c) inyectar respuestas falsificadas que alteren la disponibilidad de cupos o el estado de una reserva.
+- **Artifact:** Canal de comunicación entre el cliente web y el componente frontend. 
+- **Environment:** Operación normal del sistema en producción. Los usuarios acceden a la plataforma desde redes no controladas por la arquitectura, redes Wi-Fi universitarias, redes móviles o redes domésticas, con el sistema procesando autenticaciones, búsquedas de rutas con coordenadas GPS y mensajes de chat en tiempo real. 
+- **Response:** El sistema protege la información intercambiada y verifica la autenticidad de las partes en comunicación. Todo el tráfico HTTP se sirve sobre HTTPS y todo el tráfico WebSocket sobre WSS. Las conexiones que intenten utilizar TLS 1.0, TLS 1.1, HTTP plano o WS plano son rechazadas con código 426 Upgrade Required o cierre inmediato de conexión. La cookie access_token se emite con los atributos HttpOnly, Secure y SameSite=Lax, lo que impide su lectura desde JavaScript y restringe su transmisión a conexiones cifradas. Las coordenadas geográficas y los datos de reserva viajan únicamente dentro del payload cifrado, sin exposición en parámetros de URL. 
+- **Response measure:** Los datos interceptados son ilegibles e inutilizables, y cualquier modificación es detectada y rechazada.El 100% del tráfico entre los clientes y los componentes de presentación viaja cifrado; cero sesiones HTTP o WS planas son aceptadas. La cookie access_token no es recuperable mediante captura de tráfico con herramientas como Wireshark en ninguna sesión activa. Cero tokens de sesión o coordenadas de usuario son legibles en texto claro en capturas de red de integración.  
+
+![Representación gráfica](./imgs/SCP.png)
 
 ---
 
