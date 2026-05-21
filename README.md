@@ -532,7 +532,64 @@ Esta tabla resume la materialización conjunta de los cuatro patrones: **Secure 
 
 ---
 
-## 5. Prototipo
+## 5. Atributos de Calidad — Rendimiento
+
+### 5.1 Test 1 - Baseline (1 VU · 30 s)
+
+![Performance Test](./imgs/performance_report/performance_report-03.png)
+![Performance Test](./imgs/performance_report/performance_report-07.png)
+
+El sistema se comporta establemente bajo carga mínima. La latencia media de 214 ms representa el costo real de la cadena completa: WAF → rp-web → frontend SSR → API Gateway → loggueo-service → PostgreSQL. El timing breakdown muestra que prácticamente el 100% del tiempo es TTFB.El sistema no tiene overhead de transferencia, todo el costo está en el backend de autenticación. El spread entre p50 (213 ms) y p95 (228 ms) es de solo 15 ms, lo que indica un comportamiento muy predecible bajo carga mínima.
+### 5.2 Test 2 - Load (50 VUs · 30 s)
+
+![Performance Test](./imgs/performance_report/performance_report-09.png)
+![Performance Test](./imgs/performance_report/performance_report-13.png)
+
+0% de fallos con 50 usuarios concurrentes. La latencia media subió de 214 ms a 317 ms (+48%), y el p95 pasó de 228 ms a 539 ms. La cola del Max en 1336 ms se explica por el spike visible en el gráfico en los primeros 2 segundos. El sistema necesita establecer 50 conexiones simultáneas al pool de PostgreSQL en frío, lo que genera un pico transitorio que luego se estabiliza.
+Después del warm-up inicial, el sistema se estabiliza en el rango 200–400 ms de forma consistente, con los picos periódicos que se observan en el gráfico probablemente asociados a GC del intérprete Python de FastAPI o momentos de saturación momentánea del pool de conexiones.
+
+### 5.3 Test 3 - Stress Ramp-up (1→2000 VUs · 3 min)
+
+![Performance Test](./imgs/performance_report/performance_report-15.png)
+![Performance Test](./imgs/performance_report/performance_report-17.png)
+![Performance Test](./imgs/performance_report/performance_report-18.png)
+
+El colapso ocurre alrededor del segundo 90–100 de la prueba. Correlacionando con la rampa de VUs (1→2000 en 180 s), a t=90 s el sistema tenía aproximadamente 500–600 usuarios concurrentes activos. Ese es el punto de quiebre real del sistema actual.
+
+Comparacion:
+| Métrica | 1 VU | 50 VUs | Ramp-up |
+|---|---|---|---|
+| Avg | 214 ms | 317 ms | 23.375 ms |
+| p95 | 228 ms | 539 ms | 30.015 ms |
+| Failure rate | 0% | 0% | 77.4% |
+| Throughput | 0.86 req/s | 38.89 req/s | ~23 req/s (con fallos) |
+
+Observaciones:
+1. El colapso es por timeout, no por rechazo. El hecho de que mediana, p90, p95 y max converjan en exactamente ~30.000 ms, el timeout configurado en k6, significa que las peticiones no están siendo rechazadas activamente sino quedando en cola esperando un recurso que nunca llega. Esto es peor que un rechazo rápido porque mantiene las conexiones abiertas y agota recursos progresivamente.
+2. Los fallos son 500, no 503. El 77.4% de respuestas son HTTP 500, no 503 ni 429. Esto confirma que el cuello de botella está dentro de la aplicación, no en el WAF ni en Nginx. El sospechoso principal es el pool de conexiones de PostgreSQL en el loggueo-service: cuando se agotan las conexiones disponibles, FastAPI devuelve 500 en lugar de 503.
+3. El throughput pico fue ~60 req/s antes del colapso, lo que da una capacidad útil estimada de ~50–55 req/s con margen de seguridad.
+
+### 5.4 knee point
+
+![Performance Test](./imgs/performance_report/kneepoint.png)
+
+**Zona estable (≤ 150 VUs)** - el sistema opera con latencia media por debajo de 150 ms y 0% de errores. La curva es casi plana en escala logarítmica, lo que indica que el sistema tiene capacidad ociosa suficiente para absorber incrementos de carga sin degradación perceptible. Esta es la zona de operación normal confortable.
+
+**Knee point (160 VUs)** - es el punto de inflexión donde la curva empieza a doblar bruscamente hacia arriba. Con solo 10 VUs adicionales respecto a la zona estable, la latencia media sube un 13% y aparece un 2% de errores. Esto es la señal temprana de que el sistema está llegando a su límite, los recursos empiezan a competir sin haberse agotado todavía.
+
+**Colapso total (≥ 180 VUs)** - con apenas 20 VUs más allá del knee point, el sistema colapsa completamente: la latencia salta de ~170 ms a 15 segundos y los errores alcanzan el 100%. La transición es abrupta, lo que confirma el diagnóstico anterior de agotamiento de pool de conexiones, no hay degradación gradual sino un cliff edge.
+
+### 5.5 conclusiones
+
+1. El sistema aguanta bien carga normal. 50 usuarios concurrentes con 0% de errores y latencias razonables es un resultado sólido para un endpoint de login que toca base de datos. El problema estructural aparece a partir de ~500 VUs concurrentes.
+
+2. Circuit breaker en el API Gateway. Cuando el loggueo-service empieza a fallar, el gateway debería dejar de reenviar peticiones y responder inmediatamente con 503, en lugar de acumular peticiones en cola hasta el timeout. Esto protege los recursos del resto del sistema.
+
+3. Rate limiting por IP en el WAF. Las pruebas actuales simulan usuarios distintos, por lo que el limit_req de Nginx no se activó. Pero en un escenario real, parte de esta carga podría venir de pocos IPs — configurar un límite por IP en ModSecurity o en los reverse proxies añadiría una capa de protección complementaria.
+
+---
+
+## 6. Prototipo
 
 ### Instrucciones de Descarga y Ejecución
 
