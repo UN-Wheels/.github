@@ -591,7 +591,7 @@ Observaciones:
 
 2. Circuit breaker en el API Gateway. Cuando el loggueo-service empieza a fallar, el gateway debería dejar de reenviar peticiones y responder inmediatamente con 503, en lugar de acumular peticiones en cola hasta el timeout. Esto protege los recursos del resto del sistema.
 
-3. Rate limiting por IP en el WAF. Las pruebas actuales simulan usuarios distintos, por lo que el limit_req de Nginx no se activó. Pero en un escenario real, parte de esta carga podría venir de pocos IPs — configurar un límite por IP en ModSecurity o en los reverse proxies añadiría una capa de protección complementaria.
+3. Rate limiting por IP en el WAF. Las pruebas actuales simulan usuarios distintos, por lo que el limit_req de Nginx no se activó. Pero en un escenario real, parte de esta carga podría venir de pocos IPs, configurar un límite por IP en ModSecurity o en los reverse proxies añadiría una capa de protección complementaria.
 
 ---
 
