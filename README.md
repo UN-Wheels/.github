@@ -394,6 +394,13 @@ El sistema se descompone en siete módulos funcionales, cada uno responsable de 
 - **Response:** El sistema protege la información intercambiada y verifica la autenticidad de las partes en comunicación. Todo el tráfico HTTP se sirve sobre HTTPS y todo el tráfico WebSocket sobre WSS. Las conexiones que intenten utilizar TLS 1.0, TLS 1.1, HTTP plano o WS plano son rechazadas con código 426 Upgrade Required o cierre inmediato de conexión. La cookie access_token se emite con los atributos HttpOnly, Secure y SameSite=Lax, lo que impide su lectura desde JavaScript y restringe su transmisión a conexiones cifradas. Las coordenadas geográficas y los datos de reserva viajan únicamente dentro del payload cifrado, sin exposición en parámetros de URL.
 - **Response measure:** Los datos interceptados son ilegibles e inutilizables, y cualquier modificación es detectada y rechazada. El 100% del tráfico entre los clientes y los componentes de presentación viaja cifrado; cero sesiones HTTP o WS planas son aceptadas. La cookie access_token no es recuperable mediante captura de tráfico con herramientas como Wireshark en ninguna sesión activa. Cero tokens de sesión o coordenadas de usuario son legibles en texto claro en capturas de red de integración.
 
+- **Debilidad:** Los enlaces de red entre cliente y sistema pueden ser observados o manipulados en redes compartidas o no confiables.
+- **Vulnerabilidad:** Si el canal permitiera HTTP/WS plano o TLS débil (o existiera _downgrade_), un atacante podría leer o alterar contenido en tránsito.
+- **Riesgo (Confidencialidad/Integridad):** Exposición de tokens de sesión y datos sensibles (ubicación, reservas) o inyección de respuestas falsas que afecten el estado del sistema.
+- **Amenaza:** Actor con capacidad de interceptación (MITM) en Wi-Fi pública/ISP/nodo intermedio.
+- **Ataque:** _Sniffing_, _SSL stripping_ y manipulación de mensajes durante el intercambio cliente↔frontend.
+- **Contramedida:** Secure Channel (HTTPS/WSS + TLS fuerte) con rechazo de tráfico plano, HSTS y políticas de cookies (HttpOnly/Secure/SameSite) para reducir robo de sesión.
+
 ![Representación gráfica](./imgs/SCP.png)
 
 ---
@@ -406,6 +413,13 @@ El sistema se descompone en siete módulos funcionales, cada uno responsable de 
 - **Environment:** Operación normal. El sistema está desplegado en contenedores con redes privadas y un borde expuesto controlado por reverse proxy.
 - **Response:** El sistema rechaza las peticiones directas a los componentes sensibles y sólo permite el acceso a través de puntos de entrada públicos autorizados. Esto reduce la superficie pública y centraliza la validación y el enrutamiento en el borde.
 - **Response measure:** Los intentos de acceso no autorizado son rechazados y la información sobre los componentes internos permanece oculta. Desde el host, únicamente los puntos de entrada del reverse proxy son accesibles; los servicios internos no exponen puertos públicos.
+
+- **Debilidad:** Exponer múltiples endpoints/puertos directamente al host incrementa la superficie de ataque y facilita el reconocimiento.
+- **Vulnerabilidad:** Publicación accidental de puertos de servicios internos (o rutas internas accesibles) permite acceso directo y _fingerprinting_ del stack.
+- **Riesgo (Confidencialidad/Integridad):** Un atacante puede descubrir la topología y atacar servicios sin pasar por controles centralizados, comprometiendo datos o ejecución de operaciones no autorizadas.
+- **Amenaza:** Escáneres automatizados y actores maliciosos que enumeran puertos y endpoints públicos.
+- **Ataque:** _Port scanning_ + invocación directa a `:3000/:8080` u otros puertos publicados; enumeración de rutas y cabeceras.
+- **Contramedida:** Reverse Proxy + ocultamiento de cabeceras y exposición mínima (solo proxies al host), con políticas de enrutamiento/allow-list y hardening centralizado.
 
 ![Representación gráfica](./imgs/Reverse_Proxy.png)
 
@@ -420,6 +434,13 @@ El sistema se descompone en siete módulos funcionales, cada uno responsable de 
 - **Response:** El sistema mantiene la separación de acceso entre componentes, evitando el acceso no autorizado a los recursos internos. La segmentación restringe explícitamente qué redes privadas pueden comunicarse entre sí, limitando el movimiento lateral hacia servicios y bases de datos.
 - **Response measure:** Los intentos de enviar peticiones de red a otros componentes son bloqueados, y los recursos objetivo permanecen inaccesibles y protegidos. Incluso con un compromiso inicial, los intentos de alcanzar recursos fuera de su zona fallan por ausencia de ruta o por reglas de aislamiento entre redes.
 
+- **Debilidad:** Una red plana o con reglas permisivas permite movimiento lateral desde un componente comprometido hacia servicios y datos internos.
+- **Vulnerabilidad:** Conectividad este-oeste excesiva entre contenedores (misma red para todo o ACLs laxas) habilita accesos no previstos a bases de datos y backends.
+- **Riesgo (Confidencialidad/Integridad/Disponibilidad):** Exfiltración o manipulación de datos internos y afectación de continuidad del servicio mediante escalamiento lateral.
+- **Amenaza:** Atacante que obtiene un punto de apoyo inicial en un componente expuesto o de menor criticidad.
+- **Ataque:** Movimiento lateral: exploración de red interna, conexión a puertos de servicios/DB y abuso de credenciales/variables expuestas.
+- **Contramedida:** Network Segmentation (zonas aisladas por red) con comunicación explícita solo entre componentes autorizados, limitando rutas y accesos internos.
+
 ![Representación gráfica](./imgs/Network_Segmentation.png)
 
 ---
@@ -432,6 +453,13 @@ El sistema se descompone en siete módulos funcionales, cada uno responsable de 
 - **Environment:** Operación normal bajo alto tráfico de peticiones. El sistema debe distinguir entre picos legítimos y patrones anómalos sin degradar la experiencia de usuarios válidos.
 - **Response:** El sistema detecta el comportamiento anómalo y bloquea la fuente de las peticiones excesivas. La mitigación ocurre en el WAF del reverse proxy antes de que el tráfico llegue al frontend.
 - **Response measure:** Las peticiones provenientes de la misma dirección IP son bloqueadas cuando superan un umbral establecido en un intervalo de tiempo determinado. El bloqueo temporal y la denegación de solicitudes preservan la disponibilidad para usuarios legítimos bajo carga anómala.
+
+- **Debilidad:** Un endpoint público sin control de tasa es susceptible a saturación por volumen de solicitudes.
+- **Vulnerabilidad:** Ausencia de rate limiting, límites de conexión o filtros de WAF permite que tráfico automatizado consuma recursos del frontend.
+- **Riesgo (Disponibilidad):** Degradación del rendimiento o caída del servicio para usuarios legítimos por agotamiento de CPU/memoria/conexiones.
+- **Amenaza:** Bots o atacantes que generan tráfico masivo (HTTP flood) dirigido a los puntos de entrada.
+- **Ataque:** Envío de ráfagas concurrentes y repetidas a rutas del frontend para elevar latencia y agotar recursos.
+- **Contramedida:** WAF con rate limiting, _throttling_ y bloqueo temporal (y/o _challenge-response_) aplicado en el reverse proxy antes de llegar al frontend.
 
 ![Representación gráfica](./imgs/WAF.png)
 
