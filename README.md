@@ -128,12 +128,12 @@ Es la única zona expuesta al mundo exterior (Internet/Host). Aloja los Reverse 
 
 | Conector                                    | Tipo                    | Protocolo      | Endpoints                                                 | Dirección                                                                                 |
 | ------------------------------------------- | ----------------------- | -------------- | --------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
-| Cliente Web → Reverse Proxy Web (WAF)       | Llamada a Procedimiento | HTTPS          | `rp-web:8080`                                             | Bidireccional: Cliente (Navegador Web) → rp-web                                           |
-| Cliente Mobile → Reverse Proxy Mobile (WAF) | Llamada a Procedimiento | HTTPS          | `rp-mobile:8081`                                          | Bidireccional: Cliente (App Mobile) → rp-mobile                                           |
+| Cliente Web → Reverse Proxy Web (WAF)       | Llamada a Procedimiento | HTTPS          | `security/reverse-proxies/rp-web/`                        | Bidireccional: Cliente (Navegador Web) → rp-web                                           |
+| Cliente Mobile → Reverse Proxy Mobile (WAF) | Llamada a Procedimiento | HTTPS          | `security/reverse-proxies/rp-mobile/`                     | Bidireccional: Cliente (App Mobile) → rp-mobile                                           |
 | Cliente Web → Gateway (WebSocket bypass)    | Evento                  | WSS            | `/api/`                                                   | Bidireccional: Cliente (Navegador Web) → Gateway                                          |
-| Reverse Proxy Web → Frontend Web            | Proxy HTTP Interno      | HTTP           | `rp-web`                                                  | Unidireccional: rp-web → Frontend SSR Container                                           |
+| Reverse Proxy Web → Frontend Web            | Proxy HTTP Interno      | HTTP           | `security/reverse-proxies/rp-web/`                        | Unidireccional: rp-web → Frontend SSR Container                                           |
 | Frontend Web → API Gateway                  | Llamada a Procedimiento | HTTP REST      | `/api/`                                                   | Bidireccional: Frontend → Gateway                                                         |
-| Reverse Proxy Mobile → API Gateway          | Proxy HTTP Seguro       | HTTP REST      | `rp-mobile`, `/api/`                                      | Bidireccional: rp-mobile → Gateway                                                        |
+| Reverse Proxy Mobile → API Gateway          | Proxy HTTP Seguro       | HTTP REST      | `security/reverse-proxies/rp-mobile/`, `/api/`            | Bidireccional: rp-mobile → Gateway                                                        |
 | REST (Auth)                                 | Llamada a Procedimiento | HTTP/JSON      | `/api/auth/*`                                             | Bidireccional: Cliente → Gateway → unwheels-auth                                          |
 | REST (Routes)                               | Llamada a Procedimiento | HTTP/JSON      | `/api/routes/*`, `/api/reservations/*`, `/api/vehicles/*` | Bidireccional: Cliente → Gateway → unwheels-routes                                        |
 | REST (Notifications)                        | Llamada a Procedimiento | HTTP/JSON      | `/api/notifications/*`                                    | Bidireccional: Cliente → Gateway → unwheels-notifications                                 |
@@ -392,7 +392,7 @@ El sistema se descompone en siete módulos funcionales, cada uno responsable de 
 - **Artifact:** Canal de comunicación entre el cliente web y el componente frontend.
 - **Environment:** Operación normal del sistema en producción. Los usuarios acceden a la plataforma desde redes no controladas por la arquitectura, redes Wi-Fi universitarias, redes móviles o redes domésticas, con el sistema procesando autenticaciones, búsquedas de rutas con coordenadas GPS y mensajes de chat en tiempo real.
 - **Response:** El sistema protege la información intercambiada y verifica la autenticidad de las partes en comunicación. Todo el tráfico HTTP se sirve sobre HTTPS y todo el tráfico WebSocket sobre WSS. Las conexiones que intenten utilizar TLS 1.0, TLS 1.1, HTTP plano o WS plano son rechazadas con código 426 Upgrade Required o cierre inmediato de conexión. La cookie access_token se emite con los atributos HttpOnly, Secure y SameSite=Lax, lo que impide su lectura desde JavaScript y restringe su transmisión a conexiones cifradas. Las coordenadas geográficas y los datos de reserva viajan únicamente dentro del payload cifrado, sin exposición en parámetros de URL.
-- **Response measure:** Los datos interceptados son ilegibles e inutilizables, y cualquier modificación es detectada y rechazada.El 100% del tráfico entre los clientes y los componentes de presentación viaja cifrado; cero sesiones HTTP o WS planas son aceptadas. La cookie access_token no es recuperable mediante captura de tráfico con herramientas como Wireshark en ninguna sesión activa. Cero tokens de sesión o coordenadas de usuario son legibles en texto claro en capturas de red de integración.
+- **Response measure:** Los datos interceptados son ilegibles e inutilizables, y cualquier modificación es detectada y rechazada. El 100% del tráfico entre los clientes y los componentes de presentación viaja cifrado; cero sesiones HTTP o WS planas son aceptadas. La cookie access_token no es recuperable mediante captura de tráfico con herramientas como Wireshark en ninguna sesión activa. Cero tokens de sesión o coordenadas de usuario son legibles en texto claro en capturas de red de integración.
 
 ![Representación gráfica](./imgs/SCP.png)
 
@@ -400,34 +400,40 @@ El sistema se descompone en siete módulos funcionales, cada uno responsable de 
 
 #### Escenario 2 – Acceso No Autorizado a Componentes Privados
 
-- **Source:** Cualquier actor malicioso o escáner automatizado operando desde Internet.
-- **Stimulus:** Intentos de comunicarse directamente con componentes sensibles del sistema (backend, orquestación, etc.).
-- **Artifact:** Componentes críticos del sistema.
-- **Environment:** Operación normal.
-- **Response:** El sistema rechaza las peticiones directas a los componentes sensibles y sólo permite el acceso a través de puntos de entrada públicos autorizados.
-- **Response measure:** Los intentos de acceso no autorizado son rechazados y la información sobre los componentes internos permanece oculta.
+- **Source:** Cualquier actor malicioso o escáner automatizado operando desde Internet. Incluye bots de enumeración de puertos, _crawlers_ y herramientas de reconocimiento.
+- **Stimulus:** Intentos de comunicarse directamente con componentes sensibles del sistema (backend, orquestación, etc.). El atacante busca saltarse los puntos de entrada autorizados y alcanzar rutas internas o puertos no destinados a exposición pública.
+- **Artifact:** Componentes críticos del sistema. Por ejemplo: API Gateway, microservicios, broker de eventos y bases de datos.
+- **Environment:** Operación normal. El sistema está desplegado en contenedores con redes privadas y un borde expuesto controlado por reverse proxy.
+- **Response:** El sistema rechaza las peticiones directas a los componentes sensibles y sólo permite el acceso a través de puntos de entrada públicos autorizados. Esto reduce la superficie pública y centraliza la validación y el enrutamiento en el borde.
+- **Response measure:** Los intentos de acceso no autorizado son rechazados y la información sobre los componentes internos permanece oculta. Desde el host, únicamente los puntos de entrada del reverse proxy son accesibles; los servicios internos no exponen puertos públicos.
+
+![Representación gráfica](./imgs/Reverse_Proxy.png)
 
 ---
 
 #### Escenario 3 – Exposición Pública de Componentes Críticos
 
-- **Source:** Atacante interno o externo que ha obtenido acceso inicial a una parte pública de bajo valor del sistema.
-- **Stimulus:** El atacante intenta movimiento lateral para acceder a otros componentes sensibles (bases de datos, servicios, etc.).
-- **Artifact:** Componentes críticos del sistema.
-- **Environment:** Tras el compromiso de una parte pública de bajo valor del sistema.
-- **Response:** El sistema mantiene la separación de acceso entre componentes, evitando el acceso no autorizado a los recursos internos.
-- **Response measure:** Los intentos de enviar peticiones de red a otros componentes son bloqueados, y los recursos objetivo permanecen inaccesibles y protegidos.
+- **Source:** Atacante interno o externo que ha obtenido acceso inicial a una parte pública de bajo valor del sistema. Puede tratarse de un compromiso del frontend, de una cuenta con privilegios mínimos o de un contenedor expuesto.
+- **Stimulus:** El atacante intenta movimiento lateral para acceder a otros componentes sensibles (bases de datos, servicios, etc.). Esto incluye probar conectividad a puertos internos y buscar rutas de red hacia la capa de datos.
+- **Artifact:** Componentes críticos del sistema. En particular, servicios y almacenes de datos ubicados en redes privadas internas.
+- **Environment:** Tras el compromiso de una parte pública de bajo valor del sistema. El resto de componentes opera en zonas aisladas con reglas de comunicación explícitas.
+- **Response:** El sistema mantiene la separación de acceso entre componentes, evitando el acceso no autorizado a los recursos internos. La segmentación restringe explícitamente qué redes privadas pueden comunicarse entre sí, limitando el movimiento lateral hacia servicios y bases de datos.
+- **Response measure:** Los intentos de enviar peticiones de red a otros componentes son bloqueados, y los recursos objetivo permanecen inaccesibles y protegidos. Incluso con un compromiso inicial, los intentos de alcanzar recursos fuera de su zona fallan por ausencia de ruta o por reglas de aislamiento entre redes.
+
+![Representación gráfica](./imgs/Network_Segmentation.png)
 
 ---
 
 #### Escenario 4 – Degradación o Negación del Servicio por Tráfico Excesivo
 
-- **Source:** Atacante o bot automatizado que intenta degradar la disponibilidad del sistema.
-- **Stimulus:** Envío de un volumen excesivo de peticiones al frontend con el fin de saturar su capacidad de procesamiento.
-- **Artifact:** El componente unwheels-web-frontend y su punto de entrada público.
-- **Environment:** Operación normal bajo alto tráfico de peticiones.
-- **Response:** El sistema detecta el comportamiento anómalo y bloquea la fuente de las peticiones excesivas.
-- **Response measure:** Las peticiones provenientes de la misma dirección IP son bloqueadas cuando superan un umbral establecido en un intervalo de tiempo determinado.
+- **Source:** Atacante o bot automatizado que intenta degradar la disponibilidad del sistema. Puede provenir de una sola IP o de múltiples orígenes coordinados.
+- **Stimulus:** Envío de un volumen excesivo de peticiones al frontend con el fin de saturar su capacidad de procesamiento. Se manifiesta como ráfagas de solicitudes, conexiones concurrentes y repetición de rutas costosas.
+- **Artifact:** El componente unwheels-web-frontend y su punto de entrada público. En la práctica, el tráfico entra por el reverse proxy que protege este endpoint.
+- **Environment:** Operación normal bajo alto tráfico de peticiones. El sistema debe distinguir entre picos legítimos y patrones anómalos sin degradar la experiencia de usuarios válidos.
+- **Response:** El sistema detecta el comportamiento anómalo y bloquea la fuente de las peticiones excesivas. La mitigación ocurre en el WAF del reverse proxy antes de que el tráfico llegue al frontend.
+- **Response measure:** Las peticiones provenientes de la misma dirección IP son bloqueadas cuando superan un umbral establecido en un intervalo de tiempo determinado. El bloqueo temporal y la denegación de solicitudes preservan la disponibilidad para usuarios legítimos bajo carga anómala.
+
+![Representación gráfica](./imgs/WAF.png)
 
 ---
 
