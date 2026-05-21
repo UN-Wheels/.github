@@ -8,7 +8,7 @@ css: |
   .page-break { page-break-after: always; }
 ---
 
-# Prototipo 2 — Estructura Arquitectónica Avanzada
+# Prototipo 3 — Estructura Arquitectónica Avanzada
 
 **Arquitectura de Software — 2026-I**
 Universidad Nacional de Colombia
