@@ -185,52 +185,85 @@ Es la única zona expuesta al mundo exterior (Internet/Host). Aloja los Reverse 
 
 </div>
 
+
 #### Descripción de Elementos Arquitectónicos y Relaciones
 
-El sistema se despliega en un único nodo Docker Host ejecutando Docker Engine con Docker Compose para la orquestación de contenedores. El despliegue se divide en dos zonas:
+El sistema se despliega en un único nodo Docker Host (LAN PC) ejecutando Docker Engine con Docker Compose para la orquestación de contenedores. La arquitectura introduce una **Edge Zone** con proxies inversos Nginx como capa de entrada diferenciada por canal (web y móvil). El despliegue se organiza en cinco zonas:
 
-**Zona Pública (puertos expuestos al host)**
 
-| Elemento de Despliegue | Contenedor     | Runtime                      | Puerto                          | Descripción                                                                                                                          |
-| ---------------------- | -------------- | ---------------------------- | ------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
-| unwheels-front-mobile  | — (app nativa) | Dart VM                      | —                               | Se ejecuta en el smartphone del usuario (LAN-mobile). Se comunica con el backend a través del API Gateway por HTTP/REST y WebSocket. |
-| unwheels-api-gateway   | `api-gateway`  | Node.js (NestJS)             | 8080 (host) → 8080 (contenedor) | Punto de entrada único expuesto a la red del host. Enruta todo el tráfico externo, valida JWT y proxea WebSocket.                    |
-| unwheels-front-web     | `web-app`      | Node.js (Next.js standalone) | 3000 (host) → 3000 (contenedor) | Servidor Next.js SSR. Expuesto al host para acceso directo desde el navegador.                                                       |
+#### Zona Móvil (LAN-mobile)
 
-**Zona Interna (red bridge Docker `uniwheels_default`, solo expose)**
+| Elemento de Despliegue | Runtime | Descripción |
+|---|---|---|
+| unwheels-front-mobile | Flutter / Dart VM sobre Android (Linux) | Aplicación nativa ejecutada en el smartphone del usuario. Se comunica con el backend a través del reverse proxy móvil (`rp-mobile`) por HTTP/REST y WebSocket en el puerto 8081. |
 
-| Elemento de Despliegue | Contenedor              | Runtime                     | Puerto (interno)                | Réplicas |
-| ---------------------- | ----------------------- | --------------------------- | ------------------------------- | -------- |
-| unwheels-auth          | `auth-service`          | Python 3.x / Uvicorn        | 8000                            | ×1       |
-| unwheels-routes        | `routes-service`        | Node.js (Express)           | 4000                            | ×1       |
-| unwheels-chat          | `chat-service`          | Node.js (NestJS)            | 3001                            | ×1       |
-| unwheels-notifications | `notifications-service` | Node.js (NestJS)            | 3002                            | ×1       |
-| unwheels-search        | `route-search-service`  | Go / Gin                    | 6000                            | ×1       |
-| unwheels-rabbitmq      | `event-broker`          | RabbitMQ 3.13               | 5672 (AMQP), 15672 (Management) | ×1       |
-| auth-db                | `auth-db`               | PostgreSQL 16               | 5432                            | ×1       |
-| routes-db              | `routes-db`             | MongoDB 7                   | 27017                           | ×1       |
-| chat-db                | `chat-db`               | MongoDB 7                   | 27017                           | ×1       |
-| notifications-db       | `notifications-db`      | MongoDB 7                   | 27017                           | ×1       |
-| search-db              | `route-search-postgres` | PostgreSQL 16 + PostGIS 3.4 | 5432                            | ×1       |
 
-**Relaciones de Despliegue:**
+#### Edge Zone (puertos expuestos al host)
 
-- Todos los contenedores de la zona interna se comunican a través de la red bridge Docker `uniwheels_default` mediante DNS interno basado en nombres de contenedor.
-- El contenedor `api-gateway` depende de que `auth-service`, `chat-service`, `routes-service` y `notifications-service` estén saludables antes de iniciar (Docker Compose `depends_on: condition: service_healthy`).
-- El contenedor `web-app` depende de que `api-gateway` esté saludable.
-- Los microservicios de negocio dependen de sus respectivos datastores y, cuando aplica, de `event-broker` para estar saludables.
-- Los datos persistentes se almacenan en volúmenes Docker: `postgres_data`, `mongo_chat_data`, `mongo_notifications_data`, `mongo_routes_data`, `rabbitmq_data`, `route_search_pgdata`.
+| Elemento de Despliegue | Contenedor | Runtime | Puerto | Descripción |
+|---|---|---|---|---|
+| rp-web | `reverse-proxy-web` | Nginx | 8080 (host) → 8080 (contenedor) | Punto de entrada del tráfico web. Recibe peticiones del navegador y las enruta hacia el frontend web (puerto 3000) o hacia el `api-gateway` (puerto 8080 interno). |
+| rp-mobile | `reverse-proxy-mobile` | Nginx | 8081 (host) → 8081 (contenedor) | Punto de entrada exclusivo del tráfico móvil. Recibe peticiones de la app Flutter y las enruta hacia el `api-gateway`. |
+
+
+#### Web Zone (red interna Docker)
+
+| Elemento de Despliegue | Contenedor | Runtime | Puerto (interno) | Descripción |
+|---|---|---|---|---|
+| unwheels-front-web | `web-app` | Node.js (Next.js standalone) | 3000 | Servidor Next.js SSR. Accesible desde el exterior únicamente a través de `rp-web`. |
+
+
+#### Gateway Zone (red interna Docker)
+
+| Elemento de Despliegue | Contenedor | Runtime | Puerto (interno) | Descripción |
+|---|---|---|---|---|
+| unwheels-api-gateway | `api-gateway` | Node.js (NestJS) | 8080 | Enrutador central de tráfico backend. Valida JWT, enruta peticiones a los microservicios de negocio y gestiona conexiones WebSocket. Solo accesible desde los reverse proxies de la Edge Zone. |
+
+#### Services Zone (red interna Docker)
+
+| Elemento de Despliegue | Contenedor | Runtime | Puerto (interno) |
+|---|---|---|---|
+| unwheels-auth | `auth-service` | Python 3.x / Uvicorn (FastAPI) | 8000 |
+| unwheels-routes | `routes-service` | Node.js (Express) | 4000 |
+| unwheels-chat | `chat-service` | Node.js (NestJS) | 3001 |
+| unwheels-notifications | `notifications-service` | Node.js (NestJS) | 3002 |
+| unwheels-search | `routes-search-service` | Go / Gin (contenedor Linux) | 6000 |
+
+#### Data Zone (red interna Docker)
+
+| Elemento de Despliegue | Contenedor | Runtime | Puerto (interno) |
+|---|---|---|---|
+| unwheels-rabbitmq | `event-broker` | RabbitMQ 3.13 (Erlang VM) | 5672 (AMQP) |
+| loggueo-db | `login-db` | PostgreSQL 16 | 5432 |
+| search-db | `search-db` | PostgreSQL 16 + PostGIS | 5432 |
+| chat-db | `chat-db` | MongoDB 7 | 27017 |
+| notifications-db | `notifications-db` | MongoDB 7 | 27017 |
+| routes-db | `routes-db` | MongoDB 7 | 27017 |
+
+
+#### Relaciones de Despliegue
+
+- El tráfico web ingresa por `rp-web` (puerto 8080 del host), que lo enruta hacia `web-app` (puerto 3000) o hacia `api-gateway` (puerto 8080 interno) según la ruta.
+- El tráfico móvil ingresa exclusivamente por `rp-mobile` (puerto 8081 del host), que lo enruta hacia `api-gateway`.
+- El `api-gateway` no está expuesto directamente al host; solo es alcanzable desde los contenedores de la Edge Zone.
+- Todos los contenedores de las zonas internas (Web, Gateway, Services y Data) se comunican a través de la red bridge Docker mediante DNS interno basado en nombres de contenedor.
+- El `api-gateway` depende de que `auth-service`, `chat-service`, `routes-service` y `notifications-service` estén saludables antes de iniciar (`depends_on: condition: service_healthy`).
+- Los proxies inversos (`rp-web`, `rp-mobile`) dependen de que `api-gateway` esté saludable.
+- Los microservicios de negocio dependen de sus respectivos datastores y, cuando aplica, de `event-broker`.
+- Los datos persistentes se almacenan en volúmenes Docker: `mongodb_data`, `rabbitmq_data` y `postgres_data`.
+
+
 
 #### Descripción de Patrones Arquitectónicos
 
-| Patrón                              | Aplicación                                                                                                                                                                                                                             |
-| ----------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Containerización**                | Cada componente se empaqueta como una imagen Docker con su propio Dockerfile. Garantiza despliegues reproducibles, aislados y portables entre entornos.                                                                                |
-| **Single Entry Point**              | Solo el contenedor `api-gateway` (puerto 8080) constituye la entrada de tráfico backend desde el exterior. Los microservicios internos no están directamente accesibles, reduciendo la superficie de ataque.                           |
-| **Aislamiento de Red Interna**      | La red bridge Docker `uniwheels_default` aísla los servicios internos. Los microservicios hacen `expose` de puertos (visibles solo dentro de la red Docker) en lugar de publicarlos al host.                                           |
-| **Database per Service**            | Cada microservicio tiene su propia instancia de base de datos en un contenedor independiente con su propio volumen Docker. Ningún par de servicios comparte base de datos, garantizando acoplamiento débil en la capa de datos.        |
+| Patrón | Aplicación |
+|---|---|
+| **Containerización** | Cada componente se empaqueta como una imagen Docker con su propio Dockerfile. Garantiza despliegues reproducibles, aislados y portables entre entornos. |
+| **Dual Reverse Proxy (Edge Zone)** | Dos instancias Nginx separan el canal web (puerto 8080) del canal móvil (puerto 8081) como únicos puntos de entrada al sistema. Esto permite políticas de enrutamiento, TLS y rate-limiting diferenciadas por tipo de cliente sin exponer directamente ningún servicio de negocio. |
+| **Aislamiento de Red Interna** | La red bridge Docker `unwheels_default` aísla los servicios internos. Los proxies de la Edge Zone son los únicos contenedores con puertos publicados al host; el resto solo hace `expose`. |
+| **Database per Service** | Cada microservicio tiene su propia instancia de base de datos en un contenedor independiente con su propio volumen Docker. Ningún par de servicios comparte base de datos, garantizando acoplamiento débil en la capa de datos. |
 | **Health Check + Dependency Order** | Todos los contenedores definen healthchecks en `docker-compose.yml`. Docker Compose los usa para garantizar el orden de arranque, evitando condiciones de carrera donde un servicio intenta conectarse a un recurso aún no disponible. |
-| **Despliegue en Nodo Único**        | Para este prototipo, todos los contenedores se ejecutan en un único Docker Host mediante Docker Compose. La arquitectura está diseñada para escalar horizontalmente (p. ej., Kubernetes), pero acotada a nodo único para el prototipo. |
+| **Despliegue en Nodo Único** | Para este prototipo, todos los contenedores se ejecutan en un único Docker Host mediante Docker Compose. La zonificación de la arquitectura (Edge / Web / Gateway / Services / Data) está diseñada para migrar a orquestadores como Kubernetes con mínimo refactoring. |
 
 ---
 
