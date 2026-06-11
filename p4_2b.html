@@ -1,0 +1,2053 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <base href="file:///C:/Users/sergi/Documents/Universidad/9.%20Noveno%20Semestre/Arquitectura%20de%20Software/Proyecto/Documentation/.github/" />
+  <title>UN Wheels — Prototipo 4 (Equipo 2B)</title>
+  <style>/* ────────────────────────────────────────────────────────────────
+   UN Wheels — Estilo PDF para p4_2b.md
+   Sobrio, académico, alta legibilidad en impresión.
+   ──────────────────────────────────────────────────────────────── */
+
+@page {
+  size: A4;
+  margin: 22mm 18mm 22mm 18mm;
+}
+
+@page :first {
+  margin-top: 30mm;
+}
+
+body {
+  font-family: "Inter", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  font-size: 10.5pt;
+  line-height: 1.55;
+  color: #1f2328;
+  text-align: justify;
+  hyphens: auto;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Encabezados ───────────────────────────────────────────────── */
+h1, h2, h3, h4, h5, h6 {
+  font-family: "Inter", "Segoe UI", sans-serif;
+  font-weight: 700;
+  line-height: 1.25;
+  color: #0d1117;
+  page-break-after: avoid;
+  break-after: avoid;
+}
+
+h1 {
+  font-size: 26pt;
+  color: #8a1538;            /* Rojo UNAL */
+  text-align: center;
+  margin: 0 0 6pt 0;
+  letter-spacing: -0.5px;
+}
+
+h2 {
+  font-size: 18pt;
+  color: #8a1538;
+  border-bottom: 2px solid #8a1538;
+  padding-bottom: 4pt;
+  margin-top: 22pt;
+  margin-bottom: 10pt;
+  page-break-before: auto;
+}
+
+h3 {
+  font-size: 14pt;
+  color: #24292f;
+  margin-top: 16pt;
+  margin-bottom: 6pt;
+  border-left: 4px solid #8a1538;
+  padding-left: 8pt;
+}
+
+h4 {
+  font-size: 12pt;
+  color: #24292f;
+  margin-top: 12pt;
+  margin-bottom: 4pt;
+}
+
+h5, h6 {
+  font-size: 11pt;
+  color: #57606a;
+  margin-top: 10pt;
+}
+
+p {
+  margin: 0 0 8pt 0;
+  orphans: 3;
+  widows: 3;
+}
+
+/* ── Listas ────────────────────────────────────────────────────── */
+ul, ol {
+  margin: 4pt 0 8pt 0;
+  padding-left: 22pt;
+}
+
+li {
+  margin-bottom: 3pt;
+}
+
+li > p {
+  margin-bottom: 4pt;
+}
+
+/* ── Énfasis ───────────────────────────────────────────────────── */
+strong {
+  color: #0d1117;
+  font-weight: 700;
+}
+
+em {
+  color: #24292f;
+}
+
+/* ── Enlaces ───────────────────────────────────────────────────── */
+a {
+  color: #0969da;
+  text-decoration: none;
+  word-break: break-word;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* ── Código en línea y bloques ─────────────────────────────────── */
+code {
+  font-family: "JetBrains Mono", "Fira Code", "Cascadia Code", Consolas, "Courier New", monospace;
+  font-size: 9pt;
+  background: #f3f4f6;
+  color: #b91c1c;
+  padding: 1pt 4pt;
+  border-radius: 3pt;
+  border: 1px solid #e5e7eb;
+}
+
+pre {
+  background: #0d1117;
+  color: #e6edf3;
+  padding: 10pt 12pt;
+  border-radius: 5pt;
+  border: 1px solid #30363d;
+  overflow-x: auto;
+  font-size: 8.8pt;
+  line-height: 1.45;
+  margin: 8pt 0 12pt 0;
+  page-break-inside: avoid;
+  break-inside: avoid;
+}
+
+pre code {
+  background: transparent;
+  color: inherit;
+  border: none;
+  padding: 0;
+  font-size: 8.8pt;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* ── Citas ─────────────────────────────────────────────────────── */
+blockquote {
+  border-left: 4px solid #8a1538;
+  background: #fdf2f4;
+  padding: 6pt 12pt;
+  margin: 8pt 0;
+  color: #44232c;
+  font-style: italic;
+  border-radius: 0 4pt 4pt 0;
+  page-break-inside: avoid;
+}
+
+blockquote p {
+  margin: 0;
+}
+
+/* ── Tablas ────────────────────────────────────────────────────── */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 10pt 0 14pt 0;
+  font-size: 8.5pt;
+  line-height: 1.35;
+  table-layout: auto;           /* ancho de columna proporcional al contenido */
+  overflow-wrap: break-word;
+  page-break-inside: auto;      /* tablas largas pueden continuar en otra página */
+}
+
+th {
+  background: #8a1538;
+  color: #ffffff;
+  font-weight: 600;
+  text-align: left;
+  padding: 5pt 6pt;
+  border: 1px solid #6a0f29;
+  word-break: normal;
+  overflow-wrap: break-word;
+}
+
+td {
+  padding: 4pt 6pt;
+  border: 1px solid #d0d7de;
+  vertical-align: top;
+  word-break: normal;
+  overflow-wrap: break-word;
+}
+
+/* El código dentro de tablas no debe ensanchar la columna */
+td code, th code {
+  font-size: 7.8pt;
+  white-space: normal;
+  word-break: break-all;
+}
+
+tr:nth-child(even) td {
+  background: #f6f8fa;
+}
+
+thead {
+  display: table-header-group;  /* repite encabezado al partir tabla entre páginas */
+}
+
+tr {
+  page-break-inside: avoid;
+}
+
+/* ── Imágenes ──────────────────────────────────────────────────── */
+img {
+  display: block;
+  max-width: 78%;               /* no ocupan todo el ancho de la página */
+  max-height: 135mm;            /* caben holgadas en media página A4 */
+  width: auto;
+  height: auto;
+  margin: 12pt auto;
+  border-radius: 4pt;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
+  page-break-inside: avoid;
+  break-inside: avoid;
+}
+
+/* Logo de portada: pequeño y sin sombra */
+img[alt="Logo UN Wheels"] {
+  max-width: 110px;
+  max-height: 110px;
+  box-shadow: none;
+  margin: 8pt auto;
+}
+
+/* Capturas de pantalla / reportes de rendimiento: algo más anchas
+   porque suelen contener texto que debe seguir siendo legible */
+img[src*="performance_report"],
+img[src*="_test_"],
+img[src*="rate-limit"],
+img[src*="netseg"] {
+  max-width: 92%;
+  max-height: 150mm;
+}
+
+p:has(> img) {
+  text-align: center;
+}
+
+/* ── Separadores ───────────────────────────────────────────────── */
+hr {
+  border: none;
+  border-top: 1px solid #d0d7de;
+  margin: 14pt 0;
+}
+
+/* ── Numeración H2 (no en la portada) ──────────────────────────── */
+h2 {
+  page-break-before: auto;
+}
+
+/* Asegurar que tablas y bloques de código no se partan feo */
+table, pre, blockquote, img {
+  page-break-inside: avoid;
+}
+</style>
+</head>
+<body>
+<h1>Prototipo 4 — Atributos De Calidad, Parte 2</h1>
+<p><strong>Arquitectura de Software — 2026-I</strong>
+Universidad Nacional de Colombia</p>
+<hr>
+<h2>1. Equipo</h2>
+<p><strong>Nombre del Equipo:</strong> 2B</p>
+<table>
+<thead>
+<tr>
+<th>Nombre Completo</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Ana María González Hernández</td>
+</tr>
+<tr>
+<td>Iván Daniel Silva Oyola</td>
+</tr>
+<tr>
+<td>Daniel Alejandro Ortiz Velosa</td>
+</tr>
+<tr>
+<td>Carlos Julián Reyes Piraligua</td>
+</tr>
+<tr>
+<td>Sergio Esteban Rendón Umbarila</td>
+</tr>
+<tr>
+<td>Sergio Alejandro Ruiz Hurtado</td>
+</tr>
+<tr>
+<td>Cristian Javier Medina Barrios</td>
+</tr>
+<tr>
+<td>Camilo Andrés Liévano Rendón</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>2. Sistema de Software</h2>
+<h3>Nombre</h3>
+<p><strong>UN Wheels</strong></p>
+<h3>Logo</h3>
+<div align="center">
+
+<p><img src="./imgs/Logo_unwheels.png" alt="Logo UN Wheels"></p>
+</div>
+
+<h3>Descripción</h3>
+<p>UN Wheels es una plataforma de movilidad compartida diseñada para la comunidad universitaria de la Universidad Nacional de Colombia. Conecta estudiantes conductores con estudiantes pasajeros dentro de un ecosistema cerrado y verificado mediante correo institucional (<code>@unal.edu.co</code>), centralizando la publicación y gestión de rutas compartidas que hoy ocurren de forma dispersa en plataformas externas como WhatsApp o grupos de Facebook.</p>
+<p>El sistema permite a los conductores publicar rutas con horario, paradas, precio por asiento y cupos disponibles, mientras que los pasajeros pueden buscar rutas, reservar cupos y comunicarse directamente con el conductor mediante chat en tiempo real. El modelo se basa en un <strong>usuario único con roles dinámicos</strong>: cualquier estudiante actúa como pasajero por defecto, y al registrar un vehículo adquiere la capacidad de conductor. Las reservas incluyen control de concurrencia para garantizar que no se sobrevendan los cupos.</p>
+<p>La arquitectura sigue un patrón de microservicios distribuidos con cinco lenguajes de programación de propósito general distintos (TypeScript, Python, JavaScript, Go, Dart), cinco componentes de tipo lógico, un API Gateway para el tráfico norte-sur, un broker de mensajes (RabbitMQ) para la comunicación este-oeste y la orquestación asíncrona entre servicios, y cinco componentes de tipo datos que incluyen bases de datos relacionales y NoSQL. Todo el sistema se despliega como contenedores Docker orquestados mediante Docker Compose.</p>
+<hr>
+<h2>3. Estructuras Arquitectónicas</h2>
+<h3>3.1 Estructura de Componentes y Conectores (C&amp;C)</h3>
+<h4>Vista C&amp;C</h4>
+<div align="center">
+
+<p><img src="./imgs/c&c4.jpeg" alt="Vista C&amp;C"></p>
+</div>
+
+<h4>Descripción de Elementos Arquitectónicos y Relaciones</h4>
+<h4>Componentes</h4>
+<p><strong>Capa Edge</strong></p>
+<p>Es la única zona expuesta al mundo exterior (Internet/Host). Aloja los Reverse Proxies, que fungen simultáneamente como enrutadores y firewalls perimetrales (ModSecurity + OWASP CRS embebido).</p>
+<table>
+<thead>
+<tr>
+<th>Componente</th>
+<th>Puerto</th>
+<th>Descripción</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>rp-web</strong></td>
+<td>8080</td>
+<td>Reverse proxy dedicado al cliente web. Enruta el tráfico de páginas hacia el frontend y las conexiones WebSocket directamente al API Gateway. Posee políticas de seguridad flexibles adaptadas a navegadores (ej. permite cargas de hasta 10 MB y admite contenido multipart/form-data para subida de imágenes) e implementa Rate Limiting.</td>
+</tr>
+<tr>
+<td><strong>rp-mobile</strong></td>
+<td>8081</td>
+<td>Reverse proxy dedicado a la aplicación móvil. Enruta el tráfico exclusivamente hacia el API Gateway. Posee un perfil de seguridad sumamente estricto, diseñado para una API pura (límite de carga de 5 MB y aceptación exclusiva de peticiones en formato JSON).</td>
+</tr>
+</tbody></table>
+<p><strong>Capa Web-Zone</strong></p>
+<table>
+<thead>
+<tr>
+<th>Componente</th>
+<th>Tecnología</th>
+<th>Lenguaje</th>
+<th>Descripción</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>unwheels-frontweb</strong></td>
+<td>NextJS</td>
+<td>TypeScript</td>
+<td>Aplicación encargada del renderizado del lado del servidor (SSR) y de la interfaz de usuario web. Reside en una red aislada a la que solo el rp-web tiene acceso, impidiendo la comunicación directa desde cualquier otra fuente.</td>
+</tr>
+</tbody></table>
+<p><strong>Capa Gateway-Zone</strong></p>
+<table>
+<thead>
+<tr>
+<th>Componente</th>
+<th>Tecnología</th>
+<th>Lenguaje</th>
+<th>Descripción</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>unwheels-api-gateway</strong></td>
+<td>NodeJS</td>
+<td>TypeScript</td>
+<td>Orquestador principal de la API. Coordina, enruta y consolida las peticiones recibidas hacia los microservicios correspondientes. Recibe tráfico validado directamente desde rp-mobile, solicitudes internas desde el unwheels-front-web, y conexiones WebSocket enviadas por el rp-web.</td>
+</tr>
+</tbody></table>
+<p><strong>Capa Balance-Zone</strong></p>
+<table>
+<thead>
+<tr>
+<th>Componente</th>
+<th>Tecnología</th>
+<th>Lenguaje</th>
+<th>Descripción</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>loggueo-lb</strong></td>
+<td>HAProxy</td>
+<td>—</td>
+<td>Load balancer de software que distribuye el tráfico de autenticación entre las tres réplicas del unwheels-auth (loggueo_1, loggueo_2, loggueo_3). Implementa el patrón Load Balancer con algoritmo Round-Robin por defecto, intercambiable por Least Connections o IP Hash mediante configuración en volumen. Realiza health checks activos HTTP (GET /) cada 5 segundos sobre cada réplica, retirando automáticamente del pool toda instancia que acumule 3 fallos consecutivos y reincorporándola tras 2 checks exitosos. Mantiene el nombre DNS loggueo-service, garantizando transparencia total hacia el api-gateway.</td>
+</tr>
+</tbody></table>
+<p><strong>Capa Services-Zone</strong></p>
+<table>
+<thead>
+<tr>
+<th>Componente</th>
+<th>Tecnología</th>
+<th>Lenguaje</th>
+<th>Puerto</th>
+<th>Descripción</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>unwheels-auth</strong></td>
+<td>FastAPI + SQLAlchemy + Pydantic v2 + Uvicorn</td>
+<td>Python 3.x</td>
+<td>8000</td>
+<td>Autenticación, registro de usuarios (validando dominio <code>@unal.edu.co</code>), emisión y validación de JWT, y gestión de perfiles y vehículos. Es el único servicio que emite tokens JWT.</td>
+</tr>
+<tr>
+<td><strong>unwheels-routes</strong></td>
+<td>Express.js + Mongoose</td>
+<td>JavaScript (Node.js)</td>
+<td>4000</td>
+<td>Gestión del ciclo de vida completo de rutas y reservas: creación, consulta, control de concurrencia para cupos, y transiciones de estado de reservas (PENDING → CONFIRMED / REJECTED). Publica eventos de dominio en RabbitMQ al completar operaciones de negocio.</td>
+</tr>
+<tr>
+<td><strong>unwheels-chat</strong></td>
+<td>NestJS + Socket.IO + Mongoose</td>
+<td>TypeScript (Node.js)</td>
+<td>3001</td>
+<td>Mensajería bidireccional en tiempo real entre conductores y pasajeros. Expone un Gateway Socket.IO para mensajería en tiempo real y un Controller HTTP para consultar historial y listar conversaciones. Publica eventos <code>chat.message</code> en RabbitMQ.</td>
+</tr>
+<tr>
+<td><strong>unwheels-notifications</strong></td>
+<td>NestJS + Socket.IO + Mongoose</td>
+<td>TypeScript (Node.js)</td>
+<td>3002</td>
+<td>Consumidor de eventos asíncronos de RabbitMQ. Persiste notificaciones en MongoDB y las entrega en tiempo real vía WebSocket (Socket.IO, namespace <code>/notifications</code>). Actúa como puente AMQP↔WebSocket dentro del mismo proceso.</td>
+</tr>
+<tr>
+<td><strong>unwheels-search</strong></td>
+<td>Gin + pgx/v5</td>
+<td>Go</td>
+<td>6000</td>
+<td>Búsqueda geoespacial de rutas disponibles. Mantiene un índice de lectura optimizada en PostgreSQL+PostGIS, sincronizado periódicamente con unwheels-routes mediante polling HTTP. Expone un único endpoint público que acepta consultas de texto libre y radio geográfico.</td>
+</tr>
+</tbody></table>
+<table>
+<thead>
+<tr>
+<th>Componente</th>
+<th>Tecnología</th>
+<th>Lenguaje</th>
+<th>Descripción</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>healthmon</strong></td>
+<td>Node.js</td>
+<td>JavaScript</td>
+<td>Monitor centralizado de salud del sistema. Implementa el patrón Health Check / Heartbeat enviando probes HTTP periódicos (cada 15 s) a los cinco microservicios de lógica de negocio y al load balancer HAProxy. Mantiene contadores de fallos consecutivos por servicio y emite eventos estructurados en JSON (UNHEALTHY / RECOVERED) a stdout cuando un servicio supera el umbral de 3 fallos consecutivos. Expone los endpoints GET /status (estado agregado de todos los servicios) y GET /healthz (liveness del propio monitor).</td>
+</tr>
+</tbody></table>
+<p><strong>Componente de Orquestación</strong></p>
+<table>
+<thead>
+<tr>
+<th>Componente</th>
+<th>Tecnología</th>
+<th>Descripción</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>unwheels-rabbitmq</strong></td>
+<td>RabbitMQ 3.13 (puertos 5672 AMQP / 15672 Management UI)</td>
+<td>Broker de mensajes para comunicación asíncrona este-oeste entre microservicios. Utiliza un topic exchange durable (<code>uniwheels.events</code>) con routing keys para enrutamiento de eventos. Habilita el patrón Publish-Subscribe con desacoplamiento total entre productores y consumidores.</td>
+</tr>
+</tbody></table>
+<p><strong>Capa Data-Zone</strong></p>
+<table>
+<thead>
+<tr>
+<th>Componente</th>
+<th>Tipo</th>
+<th>Usado por</th>
+<th>Descripción</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>auth-db</strong></td>
+<td>PostgreSQL 16 (Relacional)</td>
+<td>unwheels-auth</td>
+<td>Almacena usuarios y vehículos con integridad referencial. Transacciones ACID. Accedido mediante SQLAlchemy ORM.</td>
+</tr>
+<tr>
+<td><strong>routes-db</strong></td>
+<td>MongoDB 7 (Documental)</td>
+<td>unwheels-routes</td>
+<td>Almacena rutas, reservas y reglas de disponibilidad (SPECIFIC_DATES, WEEKLY_RECURRENCE) con esquemas flexibles. Accedido mediante Mongoose.</td>
+</tr>
+<tr>
+<td><strong>chat-db</strong></td>
+<td>MongoDB 7 (Documental)</td>
+<td>unwheels-chat</td>
+<td>Almacena conversaciones y mensajes en formato append-only. Accedido mediante Mongoose.</td>
+</tr>
+<tr>
+<td><strong>notifications-db</strong></td>
+<td>MongoDB 7 (Documental)</td>
+<td>unwheels-notifications</td>
+<td>Almacena historial de notificaciones con TTL de 30 días e índice compuesto por destinatario. Accedido mediante Mongoose.</td>
+</tr>
+<tr>
+<td><strong>search-db</strong></td>
+<td>PostgreSQL 16 + PostGIS 3.4 (Geoespacial)</td>
+<td>unwheels-search</td>
+<td>Proyección de lectura de rutas con columnas GEOGRAPHY para consultas espaciales eficientes (<code>ST_DWithin</code>, <code>ST_Distance</code>). Accedido mediante pgx/v5.</td>
+</tr>
+<tr>
+<td><strong>search-redis</strong></td>
+<td>Redis 7</td>
+<td>unwheels-auth</td>
+<td>Caché en memoria dedicada al unwheels-search-service. Implementa el patrón Cache-Aside almacenando resultados de búsquedas geoespaciales con un TTL de 120 segundos y una política de evicción allkeys-lru con límite de 128 MB. Permite que búsquedas repetidas con los mismos parámetros se resuelvan en memoria sin ejecutar queries sobre PostGIS, reduciendo la latencia de respuesta y la carga sobre search-db durante picos de demanda.</td>
+</tr>
+</tbody></table>
+<h4>Conectores (Relaciones)</h4>
+<p><strong>Conectores HTTP (Cliente ↔ Gateway ↔ Servicios)</strong></p>
+<table>
+<thead>
+<tr>
+<th>Conector</th>
+<th>Tipo</th>
+<th>Protocolo</th>
+<th>Endpoints</th>
+<th>Dirección</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Cliente Web → Reverse Proxy Web (WAF)</td>
+<td>Llamada a Procedimiento</td>
+<td>HTTPS</td>
+<td><code>security/reverse-proxies/rp-web/</code></td>
+<td>Bidireccional: Cliente (Navegador Web) → rp-web</td>
+</tr>
+<tr>
+<td>Cliente Mobile → Reverse Proxy Mobile (WAF)</td>
+<td>Llamada a Procedimiento</td>
+<td>HTTPS</td>
+<td><code>security/reverse-proxies/rp-mobile/</code></td>
+<td>Bidireccional: Cliente (App Mobile) → rp-mobile</td>
+</tr>
+<tr>
+<td>Cliente Web → Gateway (WebSocket bypass)</td>
+<td>Evento</td>
+<td>WSS</td>
+<td><code>/api/</code></td>
+<td>Bidireccional: Cliente (Navegador Web) → Gateway</td>
+</tr>
+<tr>
+<td>Reverse Proxy Web → Frontend Web</td>
+<td>Proxy HTTP Interno</td>
+<td>HTTP</td>
+<td><code>security/reverse-proxies/rp-web/</code></td>
+<td>Unidireccional: rp-web → Frontend SSR Container</td>
+</tr>
+<tr>
+<td>Frontend Web → API Gateway</td>
+<td>Llamada a Procedimiento</td>
+<td>HTTP REST</td>
+<td><code>/api/</code></td>
+<td>Bidireccional: Frontend → Gateway</td>
+</tr>
+<tr>
+<td>Reverse Proxy Mobile → API Gateway</td>
+<td>Proxy HTTP Seguro</td>
+<td>HTTP REST</td>
+<td><code>security/reverse-proxies/rp-mobile/</code>, <code>/api/</code></td>
+<td>Bidireccional: rp-mobile → Gateway</td>
+</tr>
+<tr>
+<td>REST (Auth)</td>
+<td>Llamada a Procedimiento</td>
+<td>HTTP/JSON</td>
+<td><code>/api/auth/*</code></td>
+<td>Bidireccional: Cliente → Gateway → unwheels-auth</td>
+</tr>
+<tr>
+<td>REST (Routes)</td>
+<td>Llamada a Procedimiento</td>
+<td>HTTP/JSON</td>
+<td><code>/api/routes/*</code>, <code>/api/reservations/*</code>, <code>/api/vehicles/*</code></td>
+<td>Bidireccional: Cliente → Gateway → unwheels-routes</td>
+</tr>
+<tr>
+<td>REST (Notifications)</td>
+<td>Llamada a Procedimiento</td>
+<td>HTTP/JSON</td>
+<td><code>/api/notifications/*</code></td>
+<td>Bidireccional: Cliente → Gateway → unwheels-notifications</td>
+</tr>
+<tr>
+<td>REST (Search)</td>
+<td>Llamada a Procedimiento</td>
+<td>HTTP/JSON</td>
+<td><code>/api/search/*</code></td>
+<td>Bidireccional: Cliente → Gateway → unwheels-search</td>
+</tr>
+<tr>
+<td>REST (Chat HTTP)</td>
+<td>Llamada a Procedimiento</td>
+<td>HTTP/JSON</td>
+<td><code>/api/chat/*</code></td>
+<td>Bidireccional: Cliente → Gateway → unwheels-chat</td>
+</tr>
+<tr>
+<td>WebSocket/Socket.IO (Chat)</td>
+<td>Evento</td>
+<td>WS + Socket.IO</td>
+<td><code>/api/chat/socket.io</code></td>
+<td>Bidireccional: Cliente ↔ Gateway (proxy) ↔ unwheels-chat (namespace <code>/</code>)</td>
+</tr>
+<tr>
+<td>WebSocket/Socket.IO (Notif.)</td>
+<td>Evento</td>
+<td>WS + Socket.IO</td>
+<td><code>/api/notifications/socket.io</code></td>
+<td>Servidor → Cliente: Gateway (proxy) ↔ unwheels-notifications (namespace <code>/notifications</code>)</td>
+</tr>
+</tbody></table>
+<p><strong>Conectores de Message Broker (Servicio ↔ RabbitMQ)</strong></p>
+<table>
+<thead>
+<tr>
+<th>Conector</th>
+<th>Tipo</th>
+<th>Protocolo</th>
+<th>Routing Keys</th>
+<th>Publicador → Consumidor</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>AMQP (Eventos de Reserva)</td>
+<td>Unidireccional: Evento (Pub/Sub)</td>
+<td>AMQP 0.9.1</td>
+<td><code>reservation.requested</code>, <code>reservation.accepted</code>, <code>reservation.rejected</code></td>
+<td>unwheels-routes → unwheels-rabbitmq → unwheels-notifications</td>
+</tr>
+<tr>
+<td>AMQP (Eventos de Ruta)</td>
+<td>Unidireccional: Evento (Pub/Sub)</td>
+<td>AMQP 0.9.1</td>
+<td><code>route.deleted</code></td>
+<td>unwheels-routes → unwheels-rabbitmq → unwheels-notifications</td>
+</tr>
+<tr>
+<td>AMQP (Eventos de Chat)</td>
+<td>Unidireccional: Evento (Pub/Sub)</td>
+<td>AMQP 0.9.1</td>
+<td><code>chat.message</code></td>
+<td>unwheels-chat → unwheels-rabbitmq → unwheels-notifications</td>
+</tr>
+</tbody></table>
+<p><strong>Conectores de Acceso a Datos</strong></p>
+<table>
+<thead>
+<tr>
+<th>Conector</th>
+<th>Tipo</th>
+<th>Tecnología</th>
+<th>Componentes</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>db_connector_relational</td>
+<td>Acceso a Datos</td>
+<td>SQLAlchemy (Python)</td>
+<td>unwheels-auth → auth-db</td>
+</tr>
+<tr>
+<td>db_connector_documental (routes)</td>
+<td>Acceso a Datos</td>
+<td>Mongoose (Node.js)</td>
+<td>unwheels-routes → routes-db</td>
+</tr>
+<tr>
+<td>db_connector_documental (chat)</td>
+<td>Acceso a Datos</td>
+<td>Mongoose (Node.js)</td>
+<td>unwheels-chat → chat-db</td>
+</tr>
+<tr>
+<td>db_connector_documental (notif.)</td>
+<td>Acceso a Datos</td>
+<td>Mongoose (Node.js)</td>
+<td>unwheels-notifications → notifications-db</td>
+</tr>
+<tr>
+<td>db_connector_geoespacial</td>
+<td>Acceso a Datos</td>
+<td>pgx/v5 (Go)</td>
+<td>unwheels-search → search-db</td>
+</tr>
+<tr>
+<td>http_polling (Search Sync)</td>
+<td>Llamada a Procedimiento</td>
+<td>HTTP/JSON</td>
+<td>unwheels-search → unwheels-routes (sincronización periódica del índice PostGIS)</td>
+</tr>
+</tbody></table>
+<h4>Descripción de Estilos y Patrones Arquitectónicos</h4>
+<table>
+<thead>
+<tr>
+<th>Estilo / Patrón</th>
+<th>Aplicación en UN Wheels</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Microservicios</strong></td>
+<td>Cinco componentes lógicos independientes (auth, routes, chat, notifications, search), cada uno con su propio código fuente, runtime y datastore dedicado. Los servicios son desplegables de forma independiente y usan la tecnología óptima para su dominio.</td>
+</tr>
+<tr>
+<td><strong>API Gateway</strong></td>
+<td>NestJS actúa como punto de entrada único para todo el tráfico externo (norte-sur). Enruta peticiones, centraliza la validación JWT, gestiona cookies HttpOnly y realiza proxy transparente de WebSocket. Los clientes no conocen la topología interna.</td>
+</tr>
+<tr>
+<td><strong>Publish-Subscribe</strong></td>
+<td>RabbitMQ habilita la comunicación asíncrona (tráfico este-oeste) entre microservicios. Los servicios productores publican eventos de dominio en el topic exchange <code>uniwheels.events</code>; el consumidor (notifications) se suscribe con bindings comodín. Esto desacopla completamente productores de consumidores.</td>
+</tr>
+<tr>
+<td><strong>Bridge AMQP↔WebSocket</strong></td>
+<td>unwheels-notifications actúa como puente entre dos protocolos: consume eventos AMQP del broker y los entrega en tiempo real vía Socket.IO al cliente. Ambas interfaces conviven en el mismo proceso, reduciendo la latencia a ≈10–15 ms entre cola y navegador.</td>
+</tr>
+<tr>
+<td><strong>Server-Side Rendering (SSR)</strong></td>
+<td>El frontend web usa Next.js 15 para renderizar páginas en el servidor. El middleware SSR valida la cookie HttpOnly antes de renderizar rutas protegidas, sin exponer el JWT al navegador.</td>
+</tr>
+<tr>
+<td><strong>Database per Service</strong></td>
+<td>Cada microservicio posee sus propios datos en una base de datos independiente: auth → PostgreSQL, routes / chat / notifications → MongoDB ×3, search → PostgreSQL+PostGIS. No existe compartición directa de bases de datos entre servicios.</td>
+</tr>
+<tr>
+<td><strong>SOFEA</strong></td>
+<td>El backend nunca genera HTML; solo sirve JSON. Esto permite que el frontend web y el frontend móvil evolucionen de forma independiente sobre la misma superficie de API sin duplicar lógica de backend.</td>
+</tr>
+</tbody></table>
+<hr>
+<h3>3.2 Estructura de Despliegue</h3>
+<h4>Vista de Despliegue</h4>
+<div align="center">
+
+<p><img src="./imgs/Despliegue.png" alt="Vista de Despliegue"></p>
+</div>
+
+<h4>Descripción de Elementos Arquitectónicos y Relaciones</h4>
+<p>El sistema se despliega en un clúster distribuido multi-nodo utilizando Docker Swarm sobre una red local. La infraestructura se compone de dos nodos físicos: un Nodo Manager, que centraliza el plano de control, la persistencia y la suite perimetral, y un Nodo Worker, configurado como nodo de computación dedicado para la alta disponibilidad del core de negocio.La arquitectura mantiene su estrategia de Network Segmentation mediante redes virtuales superpuestas (Overlay Networks de Swarm), aislando el tráfico en cinco zonas lógicas:</p>
+<h5>Zona Móvil (LAN-mobile)</h5>
+<table>
+<thead>
+<tr>
+<th>Elemento de Despliegue</th>
+<th>Runtime</th>
+<th>Descripción</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>unwheels-front-mobile</td>
+<td>Flutter / Dart VM sobre Android (Linux)</td>
+<td>Aplicación nativa ejecutada en el smartphone del usuario. Se comunica con el backend a través del reverse proxy móvil (<code>rp-mobile</code>) por HTTP/REST y WebSocket en el puerto 8081.</td>
+</tr>
+</tbody></table>
+<h5>Edge Zone (puertos expuestos al host)</h5>
+<table>
+<thead>
+<tr>
+<th>Elemento de Despliegue</th>
+<th>Contenedor</th>
+<th>Runtime</th>
+<th>Puerto</th>
+<th>Descripción</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>rp-web</td>
+<td><code>reverse-proxy-web</code></td>
+<td>Nginx</td>
+<td>8080 (host) → 8080 (contenedor)</td>
+<td>Punto de entrada del tráfico web. Recibe peticiones del navegador y las enruta hacia el frontend web (puerto 3000) o hacia el <code>api-gateway</code> (puerto 8080 interno).</td>
+</tr>
+<tr>
+<td>rp-mobile</td>
+<td><code>reverse-proxy-mobile</code></td>
+<td>Nginx</td>
+<td>8081 (host) → 8081 (contenedor)</td>
+<td>Punto de entrada exclusivo del tráfico móvil. Recibe peticiones de la app Flutter y las enruta hacia el <code>api-gateway</code>.</td>
+</tr>
+</tbody></table>
+<h5>Web Zone (red interna Docker)</h5>
+<table>
+<thead>
+<tr>
+<th>Elemento de Despliegue</th>
+<th>Contenedor</th>
+<th>Runtime</th>
+<th>Puerto (interno)</th>
+<th>Descripción</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>unwheels-front-web</td>
+<td><code>web-app</code></td>
+<td>Node.js (Next.js standalone)</td>
+<td>3000</td>
+<td>Servidor Next.js SSR. Accesible desde el exterior únicamente a través de <code>rp-web</code>.</td>
+</tr>
+</tbody></table>
+<h5>Gateway Zone (red interna Docker)</h5>
+<table>
+<thead>
+<tr>
+<th>Elemento de Despliegue</th>
+<th>Contenedor</th>
+<th>Runtime</th>
+<th>Puerto (interno)</th>
+<th>Descripción</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>unwheels-api-gateway</td>
+<td><code>api-gateway</code></td>
+<td>Node.js (NestJS)</td>
+<td>8080</td>
+<td>Enrutador central de tráfico backend. Valida JWT, enruta peticiones a los microservicios de negocio y gestiona conexiones WebSocket. Solo accesible desde los reverse proxies de la Edge Zone.</td>
+</tr>
+</tbody></table>
+<h5>Services Zone (red interna Docker)</h5>
+<table>
+<thead>
+<tr>
+<th>Elemento de Despliegue</th>
+<th>Contenedor</th>
+<th>Runtime</th>
+<th>Puerto (interno)</th>
+<th>Despliegue en Clúster (Ubicación)</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>unwheels-auth</td>
+<td><code>auth-service</code></td>
+<td>Python 3.x / Uvicorn (FastAPI)</td>
+<td>8000</td>
+<td>1 Instancia (Fija en Nodo Manager)</td>
+</tr>
+<tr>
+<td>unwheels-routes</td>
+<td><code>routes-service</code></td>
+<td>Node.js (Express)</td>
+<td>4000</td>
+<td>Cluster Pattern (2 Réplicas): 1 Instancia en Nodo Manager y 1 Instancia en Nodo Worker.</td>
+</tr>
+<tr>
+<td>unwheels-chat</td>
+<td><code>chat-service</code></td>
+<td>Node.js (NestJS)</td>
+<td>3001</td>
+<td>1 Instancia (Fija en Nodo Manager)</td>
+</tr>
+<tr>
+<td>unwheels-notifications</td>
+<td><code>notifications-service</code></td>
+<td>Node.js (NestJS)</td>
+<td>3002</td>
+<td>1 Instancia (Fija en Nodo Manager)</td>
+</tr>
+<tr>
+<td>unwheels-search</td>
+<td><code>routes-search-service</code></td>
+<td>Go / Gin (contenedor Linux)</td>
+<td>6000</td>
+<td>1 Instancia (Fija en Nodo Manager)</td>
+</tr>
+</tbody></table>
+<h5>Data Zone (red interna Docker)</h5>
+<table>
+<thead>
+<tr>
+<th>Elemento de Despliegue</th>
+<th>Contenedor</th>
+<th>Runtime</th>
+<th>Puerto (interno)</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>unwheels-rabbitmq</td>
+<td><code>event-broker</code></td>
+<td>RabbitMQ 3.13 (Erlang VM)</td>
+<td>5672 (AMQP)</td>
+</tr>
+<tr>
+<td>auth-db</td>
+<td><code>auth-db</code></td>
+<td>PostgreSQL 16</td>
+<td>5432</td>
+</tr>
+<tr>
+<td>search-db</td>
+<td><code>search-db</code></td>
+<td>PostgreSQL 16 + PostGIS</td>
+<td>5432</td>
+</tr>
+<tr>
+<td>chat-db</td>
+<td><code>chat-db</code></td>
+<td>MongoDB 7</td>
+<td>27017</td>
+</tr>
+<tr>
+<td>notifications-db</td>
+<td><code>notifications-db</code></td>
+<td>MongoDB 7</td>
+<td>27017</td>
+</tr>
+<tr>
+<td>routes-db</td>
+<td><code>routes-db</code></td>
+<td>MongoDB 7</td>
+<td>27017</td>
+</tr>
+</tbody></table>
+<h4>Relaciones de Despliegue</h4>
+<ul>
+<li>El tráfico web ingresa por <code>rp-web</code> (puerto 8080 del host), que lo enruta hacia <code>web-app</code> (puerto 3000) o hacia <code>api-gateway</code> (puerto 8080 interno) según la ruta.</li>
+<li>El tráfico móvil ingresa exclusivamente por <code>rp-mobile</code> (puerto 8081 del host), que lo enruta hacia <code>api-gateway</code>.</li>
+<li>El <code>api-gateway</code> no está expuesto directamente al host; solo es alcanzable desde los contenedores de la Edge Zone.</li>
+<li>Todos los contenedores de las zonas internas (Web, Gateway, Services y Data) se comunican a través de la red bridge Docker mediante DNS interno basado en nombres de contenedor.</li>
+<li>El <code>api-gateway</code> depende de que <code>auth-service</code>, <code>chat-service</code>, <code>routes-service</code> y <code>notifications-service</code> estén saludables antes de iniciar (<code>depends_on: condition: service_healthy</code>).</li>
+<li>Los proxies inversos (<code>rp-web</code>, <code>rp-mobile</code>) dependen de que <code>api-gateway</code> esté saludable.</li>
+<li>Los microservicios de negocio dependen de sus respectivos datastores y, cuando aplica, de <code>event-broker</code>.</li>
+<li>Los datos persistentes se almacenan en volúmenes Docker: <code>mongodb_data</code>, <code>rabbitmq_data</code> y <code>postgres_data</code>.</li>
+</ul>
+<h4>Descripción de Patrones Arquitectónicos</h4>
+<table>
+<thead>
+<tr>
+<th>Patrón</th>
+<th>Aplicación</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Containerización</strong></td>
+<td>Cada componente se empaqueta como una imagen Docker con su propio Dockerfile. Garantiza despliegues reproducibles, aislados y portables entre entornos.</td>
+</tr>
+<tr>
+<td><strong>Dual Reverse Proxy (Edge Zone)</strong></td>
+<td>Dos instancias Nginx separan el canal web (puerto 8080) del canal móvil (puerto 8081) como únicos puntos de entrada al sistema. Esto permite políticas de enrutamiento, TLS y rate-limiting diferenciadas por tipo de cliente sin exponer directamente ningún servicio de negocio.</td>
+</tr>
+<tr>
+<td><strong>Aislamiento de Red Interna</strong></td>
+<td>La red bridge Docker <code>unwheels_default</code> aísla los servicios internos. Los proxies de la Edge Zone son los únicos contenedores con puertos publicados al host; el resto solo hace <code>expose</code>.</td>
+</tr>
+<tr>
+<td><strong>Database per Service</strong></td>
+<td>Cada microservicio tiene su propia instancia de base de datos en un contenedor independiente con su propio volumen Docker. Ningún par de servicios comparte base de datos, garantizando acoplamiento débil en la capa de datos.</td>
+</tr>
+<tr>
+<td><strong>Heartbeat Pattern</strong> (equipo)</td>
+<td><code>healthmon</code> hace polling cada 15s con umbral de 3 fallos a servicios <strong>sin LB propio</strong> (chat, routes, notifications, search, liveness del LB). No repite httpchk de réplicas auth — eso lo hace HAProxy. Docker healthcheck usa <code>/healthz</code> (liveness) en réplicas.</td>
+</tr>
+<tr>
+<td><strong>Service Discovery Pattern</strong></td>
+<td>DNS estable <code>loggueo-service</code> → HAProxy (<code>loggueo-lb</code>) con pool de 3 réplicas. <code>option httpchk GET /readyz</code> (cada 5 s) es la <strong>única fuente de verdad</strong> para enrutamiento; excluye instancias caídas. Heartbeat observa servicios sin LB, sin duplicar checks a réplicas auth.</td>
+</tr>
+<tr>
+<td><strong>Load Balancer Pattern</strong></td>
+<td>HAProxy balancea <code>loggueo_1/2/3</code> con Round-Robin (configurable a Least-Conn o Source IP). El api-gateway resuelve una sola URL; el LB excluye réplicas unhealthy vía httpchk.</td>
+</tr>
+<tr>
+<td><strong>Despliegue Multi-nodo (Clúster)</strong></td>
+<td>la infraestructura lógica se distribuye en un clúster multi-nodo gestionado por Docker Swarm sobre una red local. La suite perimetral, el API Gateway, los servicios de soporte y el Tier de Datos (Stateful) se anclan de forma estricta al Nodo Manager. En contraste, el microservicio crítico de rutas <code>unwheels-routes</code> implementa el Cluster Pattern en redundancia activa dispersando de forma asimétrica una de sus réplicas hacia un Nodo Worker.</td>
+</tr>
+</tbody></table>
+<hr>
+<h3>3.3 Estructura en Capas</h3>
+<h4>Vista en Capas</h4>
+<div align="center">
+
+<p><img src="./imgs/capas4.jpeg" alt="Vista en Capas"></p>
+</div>
+
+<h4>Descripción de elementos arquitectónicos y relaciones</h4>
+<p>La vista organiza el sistema en 8 tiers, desde el punto de entrada público hasta la persistencia de datos:</p>
+<table>
+<thead>
+<tr>
+<th>Tier</th>
+<th>Componente(s)</th>
+<th>Tecnología</th>
+<th>Responsabilidad</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Seguridad</strong></td>
+<td><code>rp-web</code></td>
+<td>nginx:1.27-alpine</td>
+<td>Único punto de entrada público para tráfico web; combina reverse proxy y WAF.</td>
+</tr>
+<tr>
+<td><strong>Presentación</strong></td>
+<td><code>unwheels-front-web</code>, <code>unwheels-front-mobile</code></td>
+<td>Next.js, Flutter/Dart</td>
+<td>Clientes web (SSR) y móvil; se comunican con el backend a través del API Gateway.</td>
+</tr>
+<tr>
+<td><strong>Edge</strong></td>
+<td><code>rp-mobile</code></td>
+<td>nginx:1.27-alpine</td>
+<td>Reverse proxy dedicado al tráfico móvil; oculta el API Gateway del exterior.</td>
+</tr>
+<tr>
+<td><strong>Integración</strong></td>
+<td><code>unwheels-api-gateway</code></td>
+<td>NestJS</td>
+<td>Punto de entrada unificado del backend; enruta peticiones y aplica políticas de autenticación/autorización.</td>
+</tr>
+<tr>
+<td><strong>Balanceo</strong></td>
+<td><code>loggueo-lb</code>, <code>healthmon</code></td>
+<td>HAProxy, Node.js</td>
+<td>Capa de equilibrio y monitoreo transversal: HAProxy distribuye tráfico hacia <code>unwheels-auth</code> y <code>healthmon</code> ejecuta heartbeat y observabilidad sobre los microservicios.</td>
+</tr>
+<tr>
+<td><strong>Lógica</strong></td>
+<td><code>unwheels-auth</code>, <code>unwheels-routes</code>, <code>unwheels-chat</code>, <code>unwheels-notifications</code>, <code>unwheels-search</code></td>
+<td>FastAPI, Express, NestJS ×2, Go/Gin</td>
+<td>Microservicios de negocio, cada uno con arquitectura de capas interna propia.</td>
+</tr>
+<tr>
+<td><strong>Comunicación Asíncrona</strong></td>
+<td><code>unwheels-rabbitmq</code></td>
+<td>RabbitMQ</td>
+<td>Broker de mensajes que desacopla al productor (<code>unwheels-routes</code>) del consumidor (<code>unwheels-notifications</code>).</td>
+</tr>
+<tr>
+<td><strong>Datos</strong></td>
+<td><code>auth-db</code>, <code>routes-db</code>, <code>chat-db</code>, <code>notifications-db</code>, <code>search-db</code>, <code>search-redis</code></td>
+<td>PostgreSQL, MongoDB ×3, PostgreSQL+PostGIS, Redis 7</td>
+<td>Persistencia por servicio y caché auxiliar; <code>search-redis</code> complementa la capa de datos para consultas y lectura acelerada.</td>
+</tr>
+</tbody></table>
+<p><strong>Estructura interna de capas — Tier de Balanceo:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Componente</th>
+<th>Capa</th>
+<th>Responsabilidad</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>loggueo-lb</code></td>
+<td>Load Balancer</td>
+<td>Distribuye el tráfico de autenticación entre las tres réplicas de <code>unwheels-auth</code>.</td>
+</tr>
+<tr>
+<td><code>healthmon</code></td>
+<td>Heartbeat / Monitor</td>
+<td>Ejecuta probes periódicos y emite eventos de salud para los microservicios.</td>
+</tr>
+</tbody></table>
+<p><strong>Estructura interna de capas — Tier de Lógica:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Servicio</th>
+<th>Capa</th>
+<th>Responsabilidad</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>unwheels-auth</strong> (FastAPI)</td>
+<td>Endpoints</td>
+<td>Expone los endpoints REST para login, validación de token y gestión de usuarios.</td>
+</tr>
+<tr>
+<td></td>
+<td>Schemas/DTOs</td>
+<td>Define esquemas de datos y objetos de transferencia entre capas.</td>
+</tr>
+<tr>
+<td></td>
+<td>CRUD</td>
+<td>Operaciones de lectura/escritura sobre <code>auth-db</code> (PostgreSQL).</td>
+</tr>
+<tr>
+<td></td>
+<td>Models/DB</td>
+<td>Modelos de datos y conexión directa con la base de datos.</td>
+</tr>
+<tr>
+<td><strong>unwheels-routes</strong> (Express)</td>
+<td>Routes</td>
+<td>Define las rutas HTTP y dirige peticiones a los controladores.</td>
+</tr>
+<tr>
+<td></td>
+<td>Controllers</td>
+<td>Recibe y valida peticiones HTTP, delega a la capa de servicios.</td>
+</tr>
+<tr>
+<td></td>
+<td>Services</td>
+<td>Lógica de negocio para rutas, control de cupos y reservas.</td>
+</tr>
+<tr>
+<td></td>
+<td>Models</td>
+<td>Modelos de datos y conexión con <code>routes-db</code> (MongoDB).</td>
+</tr>
+<tr>
+<td><strong>unwheels-chat</strong> (NestJS)</td>
+<td>Socket.IO + HTTP</td>
+<td>Gestiona conexiones WebSocket entrantes y peticiones HTTP.</td>
+</tr>
+<tr>
+<td></td>
+<td>Service</td>
+<td>Lógica de negocio del chat: envío, recepción y gestión de mensajes.</td>
+</tr>
+<tr>
+<td></td>
+<td>Repositories + Interfaces</td>
+<td>Abstrae el acceso a datos del chat.</td>
+</tr>
+<tr>
+<td></td>
+<td>Schemas</td>
+<td>Esquemas Mongoose y conexión con <code>chat-db</code> (MongoDB).</td>
+</tr>
+<tr>
+<td><strong>unwheels-notifications</strong> (NestJS)</td>
+<td>RabbitMQ</td>
+<td>Consumo asíncrono de eventos de notificación mediante AMQP.</td>
+</tr>
+<tr>
+<td></td>
+<td>Handlers</td>
+<td>Procesa eventos de RabbitMQ y determina la acción a ejecutar.</td>
+</tr>
+<tr>
+<td></td>
+<td>Controller (HTTP)</td>
+<td>Gestiona peticiones HTTP directas al servicio.</td>
+</tr>
+<tr>
+<td></td>
+<td>Service</td>
+<td>Coordina la lógica de entrega de notificaciones.</td>
+</tr>
+<tr>
+<td></td>
+<td>Socket.IO</td>
+<td>Entrega notificaciones en tiempo real vía WebSocket.</td>
+</tr>
+<tr>
+<td></td>
+<td>Schema/DB</td>
+<td>Esquemas y conexión con <code>notifications-db</code> (MongoDB).</td>
+</tr>
+<tr>
+<td><strong>unwheels-search</strong> (Go/Gin)</td>
+<td>Cmd</td>
+<td>Inicializa la aplicación Go y configura el servidor Gin.</td>
+</tr>
+<tr>
+<td></td>
+<td>Handler</td>
+<td>Recibe y valida peticiones HTTP de búsqueda.</td>
+</tr>
+<tr>
+<td></td>
+<td>Sync</td>
+<td>Lógica geoespacial y sincronización de datos con <code>unwheels-routes</code>.</td>
+</tr>
+<tr>
+<td></td>
+<td>Repository</td>
+<td>Abstrae el acceso a la base de datos geoespacial.</td>
+</tr>
+<tr>
+<td></td>
+<td>Model/DB</td>
+<td>Modelos de datos y conexión con <code>search-db</code> (PostgreSQL+PostGIS).</td>
+</tr>
+</tbody></table>
+<p><strong>Relaciones entre tiers:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Flujo</th>
+<th>Ruta</th>
+<th>Protocolo</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Web</td>
+<td><code>rp-web</code> → <code>unwheels-front-web</code> → <code>unwheels-api-gateway</code></td>
+<td>HTTPS / HTTP REST</td>
+</tr>
+<tr>
+<td>Móvil</td>
+<td><code>unwheels-front-mobile</code> → <code>rp-mobile</code> → <code>unwheels-api-gateway</code></td>
+<td>HTTPS / HTTP REST</td>
+</tr>
+<tr>
+<td>Backend</td>
+<td><code>unwheels-api-gateway</code> → [auth, routes, chat, notifications, search]</td>
+<td>HTTP REST / WebSocket</td>
+</tr>
+<tr>
+<td>Asíncrono</td>
+<td><code>unwheels-routes</code> → <code>unwheels-rabbitmq</code> → <code>unwheels-notifications</code></td>
+<td>AMQP</td>
+</tr>
+<tr>
+<td>Datos</td>
+<td>Cada microservicio → su propia base de datos</td>
+<td>ORM / driver nativo</td>
+</tr>
+</tbody></table>
+<h4>Descripción de patrones arquitectónicos utilizados</h4>
+<table>
+<thead>
+<tr>
+<th>Patrón</th>
+<th>Aplicación en UN Wheels</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Arquitectura en Capas</strong></td>
+<td>Todos los microservicios separan claramente las responsabilidades de entrada, dominio/negocio, acceso a datos y persistencia, promoviendo modularidad y testabilidad independiente.</td>
+</tr>
+<tr>
+<td><strong>Database per Service</strong></td>
+<td>Cada microservicio posee su propia base de datos aislada: MongoDB para routes, chat y notifications; PostgreSQL/PostGIS para search; PostgreSQL para auth. Ningún par de servicios comparte almacenamiento.</td>
+</tr>
+<tr>
+<td><strong>Publish-Subscribe (Message Broker)</strong></td>
+<td>RabbitMQ desacopla <code>unwheels-routes</code> (productor) de <code>unwheels-notifications</code> (consumidor), permitiendo que la finalización de una reserva dispare notificaciones asíncronas sin bloquear la transacción principal.</td>
+</tr>
+<tr>
+<td><strong>Event-Driven interno (Socket.IO Gateway)</strong></td>
+<td><code>unwheels-chat</code> y <code>unwheels-notifications</code> implementan internamente una arquitectura orientada a eventos usando Socket.IO para la entrega reactiva de mensajes y notificaciones en tiempo real a los clientes conectados.</td>
+</tr>
+</tbody></table>
+<h3>3.4 Estructura de Descomposición</h3>
+<h4>Vista de Descomposición</h4>
+<div align="center">
+
+<p><img src="./imgs/Decomposition.png" alt="Vista de Descomposición"></p>
+</div>
+
+<h4>Descripción de Elementos Arquitectónicos y Relaciones</h4>
+<p>El sistema se descompone en siete módulos funcionales, cada uno responsable de un conjunto cohesivo de funcionalidades:</p>
+<table>
+<thead>
+<tr>
+<th>Módulo</th>
+<th>Submódulos</th>
+<th>Funcionalidades Hoja</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Autenticación e Identidad</strong></td>
+<td>Cuentas, Sesión</td>
+<td>Registrar usuario (validando <code>@unal.edu.co</code>); Iniciar sesión (emitir JWT); Cerrar sesión; Validar token JWT en cada solicitud.</td>
+</tr>
+<tr>
+<td><strong>Gestión de Perfil</strong></td>
+<td>Perfil propio, Perfil público</td>
+<td>Leer y actualizar datos personales (nombre, teléfono, carrera, edad); Leer perfil público de otro usuario.</td>
+</tr>
+<tr>
+<td><strong>Gestión de Vehículos</strong></td>
+<td>CRUD de vehículos</td>
+<td>Registrar nuevo vehículo; Listar vehículos propios; Consultar detalle; Eliminar vehículo registrado.</td>
+</tr>
+<tr>
+<td><strong>Gestión de Rutas</strong></td>
+<td>Publicación, Disponibilidad, Descubrimiento</td>
+<td>Crear/actualizar/eliminar rutas propias; Agregar/eliminar reglas de disponibilidad (fechas específicas o recurrencia semanal); Vista de calendario de cupos; Buscar rutas por filtros (origen, destino, fecha, radio geográfico); Ver detalle enriquecido con datos del conductor y vehículo.</td>
+</tr>
+<tr>
+<td><strong>Reservaciones</strong></td>
+<td>Acciones del Pasajero, Acciones del Conductor</td>
+<td>Solicitar asiento; Cancelar reserva propia; Ver historial de viajes; Listar solicitudes pendientes del conductor; Aceptar/rechazar solicitudes de reserva.</td>
+</tr>
+<tr>
+<td><strong>Mensajería en Tiempo Real</strong></td>
+<td>Conversaciones, Mensajes</td>
+<td>Crear conversación conductor↔pasajero vinculada a una ruta; Listar conversaciones con último mensaje; Enviar y recibir mensajes en tiempo real (WebSocket); Consultar historial paginado.</td>
+</tr>
+<tr>
+<td><strong>Notificaciones</strong></td>
+<td>Alertas, Historial</td>
+<td>Recibir notificaciones en tiempo real (WebSocket); Consultar historial paginado; Ver contador de no leídas; Marcar como leídas (individual o todas).</td>
+</tr>
+</tbody></table>
+<p><strong>Relaciones entre módulos:</strong></p>
+<ul>
+<li><strong>Autenticación e Identidad</strong> es un módulo transversal: todos los demás módulos dependen de él para identificar y autorizar al usuario en cada operación.</li>
+<li><strong>Gestión de Rutas → Reservaciones:</strong> La creación de una reserva requiere que exista una ruta con cupos disponibles; la eliminación de una ruta cancela en cascada las reservas asociadas.</li>
+<li><strong>Reservaciones → Notificaciones:</strong> Los cambios de estado de una reserva (aceptada, rechazada) desencadenan notificaciones automáticas al pasajero vía RabbitMQ.</li>
+<li><strong>Mensajería en Tiempo Real → Notificaciones:</strong> Cuando se envía un mensaje a un usuario desconectado, se genera una notificación persistente vía RabbitMQ.</li>
+<li><strong>Gestión de Rutas → Búsqueda (Descubrimiento):</strong> El servicio de búsqueda sincroniza periódicamente su índice PostGIS con los datos de rutas activas del módulo de Gestión de Rutas.</li>
+</ul>
+<hr>
+<h2>4. Atributos de Calidad — Seguridad</h2>
+<h3>4.1 Escenarios de Seguridad</h3>
+<h4>Escenario 1 – Interceptación No Autorizada y Compromiso del Enlace de Red</h4>
+<p>El sistema protege el canal entre los clientes y la capa de presentación para impedir captura, manipulación o suplantación del tráfico en tránsito. Este escenario se presenta cuando un usuario de la comunidad universitaria accede desde una red no confiable y envía credenciales, coordenadas geográficas o eventos de chat a través del frontend web o de la aplicación móvil. Un atacante ubicado en la ruta de comunicación podría intentar leer la cookie <code>access_token</code>, forzar un <em>downgrade</em> de TLS, alterar las respuestas del sistema o inyectar contenido falso que afecte la autenticación, la consulta de rutas o la reserva de cupos. Por ello, el canal debe mantenerse cifrado de extremo a extremo y con validación estricta de la sesión para preservar la confidencialidad e integridad de los datos.</p>
+<p><img src="./imgs/SCP.png" alt="Representación gráfica"></p>
+<p><em>Descripción del Escenario</em></p>
+<ul>
+<li><strong>Source:</strong> Un atacante pasivo o activo ubicado en una red no confiable, como una Wi-Fi compartida, un segmento del ISP o un nodo intermedio comprometido, que intenta observar o alterar el tráfico entre el usuario y la plataforma.</li>
+<li><strong>Stimulus:</strong> Intentos de realizar <em>sniffing</em>, <em>man-in-the-middle</em> o <em>downgrade attacks</em> durante el intercambio de autenticación, búsqueda de rutas, reserva de cupos o mensajería en tiempo real con el frontend.</li>
+<li><strong>Artifact:</strong> Canal de comunicación HTTPS/WSS entre el cliente web o móvil y la capa de presentación, incluyendo credenciales, tokens de sesión, coordenadas geográficas y eventos de chat.</li>
+<li><strong>Environment:</strong> Operación normal del sistema en producción. Los usuarios acceden desde redes domésticas, móviles o universitarias mientras el frontend atiende solicitudes que requieren autenticación y transporte seguro de datos sensibles.</li>
+<li><strong>Response:</strong> El sistema obliga el uso de HTTPS y WSS, rechaza HTTP o WS plano y también niega versiones débiles de TLS. La cookie <code>access_token</code> se emite con <code>HttpOnly</code>, <code>Secure</code> y <code>SameSite=Lax</code>, y los datos sensibles viajan únicamente dentro del payload cifrado.</li>
+<li><strong>Response measure:</strong> El tráfico interceptado no es legible ni reutilizable, los intentos de manipulación son rechazados y ninguna sesión válida puede ser recuperada desde capturas de red. No se exponen tokens, coordenadas ni datos de reserva en texto claro.</li>
+</ul>
+<p><em>Conceptos de Seguridad</em></p>
+<ul>
+<li><strong>Debilidad:</strong> Los enlaces de red entre cliente y sistema pueden ser observados o manipulados en redes compartidas o no confiables.</li>
+<li><strong>Vulnerabilidad:</strong> Si el canal permitiera HTTP/WS plano o TLS débil (o existiera <em>downgrade</em>), un atacante podría leer o alterar contenido en tránsito.</li>
+<li><strong>Riesgo (Confidencialidad/Integridad):</strong> Exposición de tokens de sesión y datos sensibles (ubicación, reservas) o inyección de respuestas falsas que afecten el estado del sistema.</li>
+<li><strong>Amenaza:</strong> Actor con capacidad de interceptación (MITM) en Wi-Fi pública/ISP/nodo intermedio.</li>
+<li><strong>Ataque:</strong> <em>Sniffing</em>, <em>SSL stripping</em> y manipulación de mensajes durante el intercambio cliente↔frontend.</li>
+<li><strong>Contramedida:</strong> Secure Channel (HTTPS/WSS + TLS fuerte) con rechazo de tráfico plano, HSTS y políticas de cookies (HttpOnly/Secure/SameSite) para reducir robo de sesión.</li>
+</ul>
+<p><em>Componentes involucrados</em></p>
+<ul>
+<li><strong>Cliente web y aplicación móvil:</strong> generan el tráfico que debe viajar cifrado hacia la plataforma.</li>
+<li><strong>rp-web:</strong> asegura el canal público del cliente web y enruta el tráfico hacia el frontend o el gateway.</li>
+<li><strong>unwheels-front-web:</strong> recibe las peticiones cifradas y expone la interfaz de usuario web.</li>
+<li><strong>unwheels-api-gateway:</strong> procesa las llamadas que continúan desde el frontend hacia los microservicios del backend.</li>
+</ul>
+<hr>
+<h4>Escenario 2 – Acceso No Autorizado a Componentes Privados</h4>
+<p>El sistema expone múltiples microservicios internos que, si se publicaran directamente, ampliarían significativamente la superficie de ataque. El patrón de Reverse Proxy centraliza el punto de entrada público, ocultando la topología interna y actuando como único intermediario autorizado entre Internet y los componentes sensibles del sistema.</p>
+<p><img src="./imgs/Reverse_Proxy.png" alt="Representación gráfica"></p>
+<p><em>Descripción del Escenario</em></p>
+<ul>
+<li><strong>Source:</strong> Un actor malicioso externo o un escáner automatizado operando desde Internet. Incluye herramientas de reconocimiento de puertos, bots de enumeración de endpoints y frameworks de explotación automatizada que buscan activamente servicios expuestos.</li>
+<li><strong>Stimulus:</strong> El atacante intenta comunicarse directamente con componentes internos del sistema, como el unwheels-api-gateway, los microservicios (unwheels-auth, unwheels-routes, etc.) o las bases de datos, intentando saltarse los puntos de entrada autorizados (rp-web y rp-mobile). Realiza escaneos de puertos, enumeración de rutas y análisis de cabeceras HTTP para identificar el stack tecnológico.</li>
+<li><strong>Environment:</strong> Operación normal del sistema. El sistema está desplegado en contenedores con redes privadas internas. El único borde expuesto hacia Internet son los reverse proxies rp-web y rp-mobile, que reciben tráfico HTTPS/WSS y lo enrutan hacia unwheels-front-web y unwheels-front-mobile respectivamente, quienes a su vez se comunican con el API Gateway.</li>
+<li><strong>Response:</strong> El sistema rechaza cualquier petición directa hacia los componentes sensibles que no provenga del reverse proxy. Los servicios internos —unwheels-api-gateway, microservicios, broker RabbitMQ y bases de datos— no exponen puertos hacia el host ni hacia Internet. El reverse proxy además suprime o modifica las cabeceras que revelan información del stack tecnológico antes de retornar cualquier respuesta al cliente.</li>
+<li><strong>Response measure:</strong> Los intentos de acceso directo a puertos internos son rechazados con conexión rehusada o silenciados completamente. Desde el exterior, únicamente los puertos del reverse proxy son accesibles; los demás no responden. La topología interna del sistema permanece opaca para el atacante, imposibilitando el fingerprinting de los servicios.</li>
+</ul>
+<p><em>Conceptos de Seguridad</em></p>
+<ul>
+<li><strong>Weakness:</strong> Exponer múltiples puertos y endpoints de servicios internos directamente al host incrementa la superficie de ataque y facilita el reconocimiento del sistema. Publicar directamente el API Gateway o los microservicios permitiría a un atacante identificar versiones, rutas disponibles y tecnologías empleadas sin necesidad de autenticación.</li>
+<li><strong>Vulnerability:</strong> La publicación accidental de puertos de servicios internos (por ejemplo, el puerto del unwheels-api-gateway o de unwheels-auth) permite acceso directo y fingerprinting del stack. Adicionalmente, las cabeceras HTTP por defecto de frameworks como Express o Spring revelan información sobre versiones y tecnologías utilizadas.</li>
+<li><strong>Risk (Confidentiality/Integrity):</strong> Un atacante que descubra la topología interna puede atacar servicios individuales sin pasar por los controles centralizados del reverse proxy, comprometiendo datos sensibles (credenciales, rutas de usuarios, información de notificaciones) o ejecutando operaciones no autorizadas sobre los microservicios del sistema.</li>
+<li><strong>Threat:</strong> Escáneres automatizados y actores maliciosos que enumeran puertos y endpoints públicos del sistema, buscando servicios internos accesibles desde Internet para explotarlos directamente.</li>
+<li><strong>Atack:</strong> El atacante ejecuta un escaneo de puertos sobre el host del sistema e identifica puertos internos expuestos accidentalmente. Posteriormente invoca directamente rutas sensibles como /api/auth/login, /api/routes u otras del API Gateway o microservicios, evitando los controles del reverse proxy. También analiza las cabeceras de respuesta para determinar el framework y versión del servidor, facilitando la selección de exploits específicos.</li>
+<li><strong>Countermeasure:</strong> Implementación del patrón Reverse Proxy mediante rp-web y rp-mobile como únicos puntos de entrada públicos al sistema. Los microservicios internos, el API Gateway, las bases de datos y el broker RabbitMQ se alojan en redes privadas de contenedores sin exposición de puertos al host. El reverse proxy aplica reglas de enrutamiento tipo allow-list, suprime cabeceras reveladoras del stack y centraliza el control de acceso y validación antes de reenviar cualquier petición al interior del sistema.</li>
+</ul>
+<p><em>Componentes involucrados</em></p>
+<ul>
+<li><strong>rp-web y rp-mobile:</strong> Reverse proxies tanto para el cliente web como para el cliente móvil, expuestos públicamente en la zona edge</li>
+<li><strong>Componentes del sistema:</strong> Los componentes restantes de presentación, de comunicación asincrónica, de datos, lógicos y de orquestración permaneción ocultos y nunca expuestos directamente, se encuentran protegidos por medio de los reverse proxies como único punto de acceso al sistema.</li>
+</ul>
+<hr>
+<h4>Escenario 3 – Exposición Pública de Componentes Críticos</h4>
+<p>Un atacante que logre comprometer u obtener un punto de apoyo inicial en un componente expuesto de la capa perimetral (Edge) o de presentación (Web) no tendrá visibilidad de red, resolución DNS ni conectividad directa hacia las bases de datos, el message broker o los microservicios privados del backend, confinando el radio de la brecha exclusivamente al contenedor vulnerado.</p>
+<p><img src="./imgs/Network_Segmentation.png" alt="Representación gráfica"></p>
+<p><em>Descripción del Escenario</em></p>
+<ul>
+<li><strong>Source:</strong> Un atacante interno o externo que ha logrado vulnerar u obtener acceso inicial a un componente periférico del sistema, como el servidor de presentación (unwheels-frontweb) o que ha tomado control de una instancia en la zona perimetral tras evadir las reglas del WAF.</li>
+<li><strong>Stimulus:</strong> El atacante intenta realizar movimientos laterales (comunicación Este-Oeste) dentro del host de Docker para reconocer la infraestructura interna, mapear servicios ocultos (como el api-gateway) o atacar directamente las fuentes de persistencia ejecutando escaneos de puertos</li>
+<li><strong>Environment:</strong> El sistema opera bajo una condición de compromiso parcial o localizado. El contenedor perimetral se encuentra vulnerado, mientras que el Tier de Lógica, el Tier de Integración y el Tier de Datos operan en redes privadas internas con reglas de comunicación explícitas y restrictivas.</li>
+<li><strong>Response:</strong> La infraestructura de red de Docker (aislada en las redes independientes edge, web-zone, gateway-zone, services-zone y data-zone) deniega la comunicación directa entre componentes no adyacentes. El motor de aislamiento del host descarta los paquetes e impide la resolución de nombres DNS entre zonas distantes, neutralizando el pivoteo táctico.</li>
+<li><strong>Response measure:</strong> El 100% de los intentos de conexión directa o escaneo de puertos originados desde un contenedor hacia una zona no adyacente fallan inmediatamente por ausencia de ruta lógica (Network unreachable). Los únicos contenedores que exponen puertos al host externo son rp-web (:8080) y rp-mobile (:8081). Ningún microservicio ni motor de base de datos posee bindings de puertos abiertos hacia el host o hacia redes fuera de su zona de datos, limitando el radio de impacto de la brecha a un valor de cero (0) componentes internos expuestos.</li>
+</ul>
+<p><em>Conceptos de Seguridad</em></p>
+<ul>
+<li><strong>Weakness:</strong> Confianza implícita en la red interna o topología plana. Confiar en que el control perimetral externo es suficiente para proteger el backend, asumiendo que los componentes internos no necesitan restricciones mutuas de visibilidad.</li>
+<li><strong>Vulnerability:</strong> Conectividad este-oeste sin restricciones en entornos de contenedores. En un despliegue por defecto (red bridge única), cualquier vulnerabilidad de inyección de código (RCE) o Server-Side Request Forgery (SSRF) en el frontend permite que un atacante use el contenedor como puente para conectarse directamente a los puertos privados de las bases de datos o inyectar mensajes en el broker.</li>
+<li><strong>Risk (Confidentiality/Integrity):</strong> Pérdida catastrófica de Confidencialidad e Integridad de los datos. Si la red es plana, el compromiso de la interfaz web permite la exfiltración masiva de perfiles de usuarios, registros de rutas, historiales de chat y la manipulación ilícita de reservas, escalando un fallo de presentación en un compromiso total de la infraestructura de UN Wheels.</li>
+<li><strong>Threat:</strong> Actores maliciosos que buscan explotar vulnerabilidades de software en la capa de cara al usuario para pivotar hacia el Core del sistema, evadiendo los mecanismos lógicos de autenticación mediante el acceso directo a los sockets de la base de datos o el secuestro de variables de entorno de otros contenedores.</li>
+<li><strong>Attack:</strong> Movimiento lateral, reconocimiento interno y abuso de confianza de red. El atacante ejecuta binarios de escaneo (como scripts de red en bash o herramientas de escaneo TCP) desde el interior del contenedor web comprometido para descubrir las IPs internas asignadas por Docker y forzar conexiones hacia servicios del backend.</li>
+<li><strong>Countermeasure:</strong> Countermeasure (Contramedida): Implementación del Network Segmentation Pattern mediante la segregación explícita de la infraestructura en 5 subredes lógicas aisladas de Docker:<ol>
+<li><p><strong>edge:</strong> Red pública exclusiva para recibir tráfico externo en los Reverse Proxies (rp-web y rp-mobile).</p>
+</li>
+<li><p><strong>web-zone:</strong> Canal aislado para la comunicación exclusiva entre rp-web y unwheels-frontweb.</p>
+</li>
+<li><p><strong>gateway-zone:</strong> Canal que conecta los proxies perimetrales con el api-gateway.</p>
+</li>
+<li><p><strong>services-zone:</strong> Red interna que comunica al api-gateway con el Tier de Lógica (unwheels-auth, routes-reservations-service, chat-service, notifications-service, route-search-service).</p>
+</li>
+<li><p><strong>data-zone:</strong> Compartimento estanco de máxima seguridad donde los microservicios se conectan a sus respectivas bases de datos y al broker (rabbitmq), bloqueando el acceso a cualquier componente externo a esta zona.</p>
+</li>
+</ol>
+</li>
+</ul>
+<p><em>Componentes involucrados</em></p>
+<ul>
+<li><p><strong>rp-web y rp-mobile (Zona Edge):</strong> Actúan como los únicos puntos de entrada perimetral expuestos públicamente hacia el host. Aíslan el tráfico externo entrante canalizándolo hacia sus respectivas zonas autorizadas (web-zone y gateway-zone), impidiendo que cualquier entidad de la red externa mapee las subredes internas del clúster.</p>
+</li>
+<li><p><strong>unwheels-frontweb (Zona Web):</strong> Servidor de presentación para la aplicación web SSR, confinado en una red aislada donde únicamente puede ser accedido por el proxy rp-web y solo tiene permitido comunicarse hacia el api-gateway mediante la zona de integración.</p>
+</li>
+<li><p><strong>api-gateway (Zona Gateway):</strong> Componente central de enrutamiento y autenticación (Tier de Integración). Está estratégicamente aislado en la gateway-zone para recibir peticiones limpias desde los proxies perimetrales y retransmitirlas a la services-zone, sirviendo como cortafuegos lógico hacia las reglas de negocio.</p>
+</li>
+<li><p><strong>Microservicios de Lógica (Zona Services):</strong> Comprende los servicios del sistema. Están completamente aislados del exterior dentro de la services-zone; solo pueden escuchar comandos provenientes del api-gateway y comunicarse de manera segura hacia sus respectivas fuentes persistentes en la zona de datos.</p>
+</li>
+<li><p><strong>Almacenes de Datos y Broker (Zona Data):</strong> Integrado por los contenedores de persistencia y el sistema de mensajería asincrónica. Es el compartimento estanco de máxima seguridad; carece de cualquier ruta o enrutamiento hacia las capas perimetrales o de presentación, respondiendo de forma exclusiva a las peticiones del microservicio que posee su propiedad dominial de datos.</p>
+</li>
+</ul>
+<hr>
+<h4>Escenario 4 – Degradación o Negación del Servicio por Tráfico Excesivo</h4>
+<p>La disponibilidad de un sistema como UN-Wheels puede verse afectada cuando un atacante inunda al mismo con un exceso de peticiones, que es lo que sucede en un ataque de Denegación de Servicio Distribuido (DDoS). Para evitar que esto suceda se debe limitar el número de peticiones que se pueden realizar en un determinado periodo de tiempo de modo que se bloquee el tráfico producido por tráfico extraño proveniente de peticiones idénticas o acceso repetitivo a una misma URL. EL rate limiting puede limitar el número de peticiones que se pueden realizar en un periodo de tiempo determinado</p>
+<p><img src="./imgs/WAF.png" alt="Representación gráfica"></p>
+<ul>
+<li><strong>Source:</strong> Atacante o bot automatizado que intenta degradar la disponibilidad del sistema. Puede provenir de una sola IP o de múltiples orígenes coordinados.</li>
+<li><strong>Stimulus:</strong> Envío de un volumen excesivo de peticiones al frontend con el fin de saturar su capacidad de procesamiento. Se manifiesta como ráfagas de solicitudes, conexiones concurrentes y repetición de rutas costosas.</li>
+<li><strong>Artifact:</strong> El componente unwheels-web-frontend y su punto de entrada público. En la práctica, el tráfico entra por el reverse proxy que protege este endpoint.</li>
+<li><strong>Environment:</strong> Operación normal bajo alto tráfico de peticiones. El sistema debe distinguir entre picos legítimos y patrones anómalos sin degradar la experiencia de usuarios válidos.</li>
+<li><strong>Response:</strong> El sistema detecta el comportamiento anómalo y bloquea la fuente de las peticiones excesivas. La mitigación ocurre en el WAF del reverse proxy antes de que el tráfico llegue al frontend.</li>
+<li><strong>Response measure:</strong> Las peticiones provenientes de la misma dirección IP son bloqueadas cuando superan un umbral establecido en un intervalo de tiempo determinado. El bloqueo temporal y la denegación de solicitudes preservan la disponibilidad para usuarios legítimos bajo carga anómala.</li>
+</ul>
+<p><em>Conceptos de Seguridad</em></p>
+<ul>
+<li><strong>Weakness:</strong> Un endpoint público sin control de tasa es susceptible a saturación por volumen de solicitudes.</li>
+<li><strong>Vulnerability:</strong> Ausencia de rate limiting, límites de conexión o filtros de WAF permite que tráfico automatizado consuma recursos del frontend.</li>
+<li><strong>Risk (Disponibilidad):</strong> Degradación del rendimiento o caída del servicio para usuarios legítimos por agotamiento de CPU/memoria/conexiones.</li>
+<li><strong>Threat:</strong> Bots o atacantes que generan tráfico masivo (HTTP flood) dirigido a los puntos de entrada.</li>
+<li><strong>Attack:</strong> Envío de ráfagas concurrentes y repetidas a rutas del frontend para elevar latencia y agotar recursos.</li>
+<li><strong>Countermeasure:</strong> WAF con rate limiting, <em>throttling</em> y bloqueo temporal (y/o <em>challenge-response</em>) aplicado en el reverse proxy antes de llegar al frontend.</li>
+</ul>
+<p><em>Componentes involucrados</em></p>
+<ul>
+<li><strong>rp-web:</strong> El WAF está incorporado al reverse proxy del FrontEnd web. En la práctica, el tráfico entra por el reverse proxy que protege este componente.</li>
+</ul>
+<hr>
+<h3>4.2 Tácticas Arquitectónicas Aplicadas</h3>
+<h4>1. Encrypt Data</h4>
+<p><strong>Descripción:</strong> Esta táctica busca proteger la confidencialidad e integridad de los datos en tránsito mediante cifrado extremo a extremo, autenticación de entidades y verificación de la integridad de los mensajes (por ejemplo, TLS con certificados y mecanismos MAC).</p>
+<p><strong>Aplicación:</strong> Se aplica sobre el canal público entre el navegador web y el componente unwheels-web-frontend, garantizando que todas las peticiones HTTP se negocien como HTTPS (TLS). La evidencia operativa incluye certificados digitales válidos en el frontend y la negociación TLS en los puertos públicos.</p>
+<p><strong>Patrón asociado:</strong> Secure Channel Pattern.</p>
+<h4>2. Limit Access</h4>
+<p><strong>Descripción:</strong> Esta táctica se centra en minimizar la superficie de ataque y controlar el acceso a los recursos internos mediante intermediarios y políticas de filtrado: reducir la exposición de endpoints, imponer reglas estrictas de enrutamiento, ocultar metadatos y bloquear tráfico no autorizado antes de que alcance los servicios internos.</p>
+<p><strong>Aplicación:</strong> Se implementa en los puntos de entrada públicos (los reverse proxies que sirven a los frontends web y móvil). Estos proxies aplican reglas de enrutamiento, listas de control de acceso y filtros que sólo permiten tráfico explícitamente autorizado hacia los servicios mapeados, ocultando las direcciones internas y las cabeceras. También se evidencia en las reglas de acceso entre subredes, que restringen qué entidades pueden invocar a los servicios alojados en las redes privadas internas.</p>
+<p><strong>Patrón asociado:</strong> Reverse Proxy Pattern.</p>
+<h4>3. Detect Service Denial</h4>
+<p><strong>Descripción:</strong> Esta táctica busca detectar y mitigar los intentos de degradación del servicio mediante análisis de tráfico en tiempo real (detección de ráfagas, IPs sospechosas y patrones de petición anómalos) y aplicar contramedidas automáticas como rate limiting, <em>throttling</em> de conexiones, bloqueo temporal y mecanismos <em>challenge-response</em>. El objetivo es preservar la disponibilidad para los usuarios legítimos mientras se filtra la carga maliciosa.</p>
+<p><strong>Aplicación:</strong> Se implementa en la capa WAF integrada en el proxy de entrada del frontend web, donde se monitorean continuamente las métricas de tasa de petición y las firmas de ataque. Las políticas de mitigación se ejecutan en esta capa antes de que el tráfico alcance al componente unwheels-web-frontend.</p>
+<p><strong>Patrón asociado:</strong> Web Application Firewall (WAF) Pattern.</p>
+<hr>
+<h3>4.3 Patrones Arquitectónicos Aplicados</h3>
+<h4>1. Secure Channel Pattern</h4>
+<p>El sistema UN Wheels aplica el <strong>Secure Channel Pattern</strong>. Esto se evidencia en el conector dispuesto para el frontend web, garantizando que todos los mensajes se intercambien mediante el protocolo HTTPS, el cual cifra y valida todas las peticiones y respuestas. El patrón protege las credenciales del usuario y la información sensible frente a posibles atacantes que estén espiando el canal de comunicación.</p>
+<h4>2. Reverse Proxy Pattern</h4>
+<p>El sistema UN Wheels aplica el <strong>Reverse Proxy Pattern</strong>. En el sistema se implementan dos reverse proxies para los endpoints públicos (uno para el cliente web y otro para el cliente móvil). Estos proxies median la comunicación entre los clientes y el sistema de forma segura, redirigiendo las peticiones a sus componentes correspondientes y enmascarando toda la infraestructura interna, incluyendo el API Gateway. El patrón protege al sistema frente a intentos de escaneo o ataque contra los servicios internos.</p>
+<h4>3. Network Segmentation Pattern</h4>
+<p>El sistema UN Wheels aplica el <strong>Network Segmentation Pattern</strong>. Cada nivel del sistema se encuentra aislado dentro de una red privada, permitiendo la comunicación únicamente entre componentes de capas de red adyacentes. Esto impide el acceso a componentes privados aunque un atacante obtenga información sobre su ubicación. El patrón previene que entidades no autorizadas envíen peticiones directas a los componentes del backend, protegiéndolos frente a ataques directos.</p>
+<h4>4. Web Application Firewall (WAF) Pattern</h4>
+<p>El sistema UN Wheels aplica el <strong>Web Application Firewall (WAF) Pattern</strong>. El sistema integra un WAF dentro del reverse proxy en el punto de entrada del cliente web, estableciendo un umbral sobre las peticiones entrantes desde una misma dirección IP en un intervalo de tiempo determinado, y mostrando una ventana de bloqueo con un mensaje de advertencia cuando se activa la regla. El patrón protege al componente del frontend web frente a posibles ataques de Denegación de Servicio (DoS).</p>
+<hr>
+<h3>4.4 Relación entre Patrones Aplicados y Escenarios</h3>
+<table>
+<thead>
+<tr>
+<th><strong>Escenario</strong></th>
+<th><strong>Patrón</strong></th>
+<th><strong>Explicación</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Escenario 1 – Interceptación No Autorizada y Compromiso del Enlace de Red</td>
+<td>Secure Channel Pattern</td>
+<td>Garantiza que todas las comunicaciones entre el cliente y el frontend estén cifradas y autenticadas, preservando la confidencialidad e integridad de los datos.</td>
+</tr>
+<tr>
+<td>Escenario 2 – Acceso No Autorizado a Componentes Privados</td>
+<td>Reverse Proxy Pattern</td>
+<td>Filtra y controla todo el tráfico entrante, exponiendo únicamente los endpoints públicos autorizados y enmascarando los componentes internos y la estructura de red.</td>
+</tr>
+<tr>
+<td>Escenario 3 – Exposición Pública de Componentes Críticos</td>
+<td>Network Segmentation Pattern</td>
+<td>Separa al sistema en zonas de red aisladas, evitando el movimiento lateral y el acceso no autorizado a los servicios sensibles del backend.</td>
+</tr>
+<tr>
+<td>Escenario 4 – Degradación o Negación del Servicio por Tráfico Excesivo</td>
+<td>Web Application Firewall (WAF) Pattern</td>
+<td>Monitorea y limita las tasas de petición, bloqueando el tráfico sospechoso o excesivo para mantener la disponibilidad del sistema frente a ataques DoS.</td>
+</tr>
+</tbody></table>
+<hr>
+<h3>4.5 Pruebas de Verificación</h3>
+<h4>1. Reverse Proxy (Superficie Pública y Hardening Centralizado)</h4>
+<p>Se ejecutó una verificación automatizada comparando dos escenarios: <strong>(1) sin reverse proxy</strong> y <strong>(2) con reverse proxy activo</strong>. En el escenario <em>before</em>, se expusieron directamente al host el Frontend SSR (<code>:3000</code>) y el API Gateway (<code>:8080</code>), aumentando la superficie pública y permitiendo inferir la tecnología del backend desde cabeceras como <code>X-Powered-By</code>.</p>
+<p>En el escenario <em>after</em>, el acceso directo al puerto del frontend queda bloqueado y la entrada pública se concentra en el proxy (ej. <code>https://localhost:8080</code>), ocultando el <em>fingerprint</em> del backend y aplicando <em>hardening</em> centralizado mediante cabeceras de seguridad (HSTS, <code>X-Frame-Options</code>, <code>X-Content-Type-Options</code>, etc.).</p>
+<p><img src="./imgs/Before_test_RP.png" alt="Reverse Proxy Test — BEFORE (sin proxy)"></p>
+<p><img src="./imgs/After_test_RP.png" alt="Reverse Proxy Test — AFTER (con proxy)"></p>
+<h4>2. Web Application Firewall — Rate Limiting</h4>
+<p><strong>Objetivo:</strong> demostrar que el firewall aplica control de tráfico en endpoints de autenticación y bloquea ráfagas abusivas.</p>
+<p><strong>Ejecución (flujo completo):</strong></p>
+<pre><code class="language-powershell">.\run_all_demos.ps1
+</code></pre>
+<p><strong>Ejecución (solo rate limiting):</strong></p>
+<pre><code class="language-powershell">.\activate_before_rate_limit.ps1
+.\test_rate_limiting.ps1
+.\activate_after_rate_limit.ps1
+.\test_rate_limiting.ps1
+</code></pre>
+<p><strong>Cómo se prepara cada escenario:</strong></p>
+<ul>
+<li><strong>BEFORE (sin protección):</strong> <code>activate_before_rate_limit.ps1</code> edita las configuraciones de <code>rp-web</code> y <code>rp-mobile</code> para elevar los límites a <code>99999</code> y reinicia los proxies. Esto simula tráfico sin control de tasa.</li>
+<li><strong>AFTER (protegido):</strong> <code>activate_after_rate_limit.ps1</code> restaura los límites reales (auth <code>5 r/min</code>, API <code>15 r/s</code>) y reinicia los proxies, activando el bloqueo por exceso de solicitudes.</li>
+</ul>
+<p><strong>Resultados esperados:</strong></p>
+<ul>
+<li><strong>BEFORE (sin límites):</strong> 20 respuestas <code>401</code>, 0 respuestas <code>429</code>.</li>
+<li><strong>AFTER (protegido):</strong> primeras ~3 respuestas <code>401</code> y luego <code>429</code> en el resto (por <code>rate=5r/m</code> y <code>burst=2</code>).</li>
+</ul>
+<p><strong>Interpretación:</strong></p>
+<ul>
+<li><code>401</code> = la solicitud llegó al backend pero las credenciales son inválidas.</li>
+<li><code>429</code> = el proxy bloqueó por exceso de solicitudes (rate limiting activo).</li>
+</ul>
+<p><img src="./imgs/rate-limit-before.png" alt="Rate limiting BEFORE">
+<img src="./imgs/rate-limit-after.png" alt="Rate limiting AFTER"></p>
+<h4>B. Network Segmentation — Zonas Docker</h4>
+<p><strong>Objetivo:</strong> evidenciar que la segmentación impide movimiento lateral hacia componentes sensibles (bases de datos) y solo permite rutas autorizadas.</p>
+<p><strong>Ejecución (solo conectividad):</strong></p>
+<pre><code class="language-powershell">.\test_network_segmentation.ps1
+</code></pre>
+<p><strong>Cómo se prepara cada escenario:</strong></p>
+<ul>
+<li><strong>BEFORE (red plana):</strong> el script <code>activate_before_network.ps1</code> conecta contenedores críticos a la red <code>uniwheels-flat</code>, permitiendo comunicación libre entre ellos.</li>
+<li><strong>AFTER (zonas aisladas):</strong> <code>activate_after_network.ps1</code> desconecta la red plana y verifica que cada servicio quede únicamente en sus redes originales (edge, web-zone, gateway-zone, services, data).</li>
+</ul>
+<p><strong>Resultados esperados:</strong></p>
+<ul>
+<li><strong>BEFORE (red plana):</strong> todo conecta, incluyendo accesos indebidos (ej. <code>web-app -&gt; auth-db</code>).</li>
+<li><strong>AFTER (zonas aisladas):</strong> los accesos indebidos quedan bloqueados; rutas válidas continúan funcionando.</li>
+</ul>
+<p><img src="./imgs/netseg-before.png" alt="Network segmentation BEFORE">
+<img src="./imgs/netseg-after.png" alt="Network segmentation AFTER"></p>
+<hr>
+<h3>4.6 Evidencia de Despliegue</h3>
+<p>Al ejecutar <code>docker compose ps</code> sobre el stack final se observa que <strong>únicamente los reverse proxies tienen puertos publicados al host</strong>, materializando conjuntamente los cuatro patrones aplicados:</p>
+<pre><code>NAME                    PORTS
+rp-web                  0.0.0.0:8080-&gt;443/tcp
+rp-mobile               0.0.0.0:8081-&gt;443/tcp
+api-gateway             (sin puertos)
+web-app                 (sin puertos)
+auth-service            (sin puertos)
+chat-service            (sin puertos)
+notifications-service   (sin puertos)
+routes-service          (sin puertos)
+route-search-service    (sin puertos)
+auth-db                 (sin puertos)
+chat-db                 (sin puertos)
+notifications-db        (sin puertos)
+routes-db               (sin puertos)
+route-search-postgres   (sin puertos)
+event-broker            (sin puertos)
+</code></pre>
+<p>Esta tabla resume la materialización conjunta de los cuatro patrones: <strong>Secure Channel</strong> (TLS terminado dentro de los contenedores <code>rp-web</code> y <code>rp-mobile</code> en el puerto 443), <strong>Reverse Proxy</strong> (sólo dichos contenedores exponen puertos al host), <strong>Network Segmentation</strong> (todos los demás componentes están aislados en redes privadas internas) y <strong>WAF</strong> (incorporado en la imagen base de ambos reverse proxies).</p>
+<hr>
+<h2>5. Atributos de Calidad — Rendimiento</h2>
+<p>Las pruebas se ejecutaron sobre <code>POST /api/auth/login</code> y, en la sesión completa, sobre <code>login → /me → search/routes → logout</code> usando k6 contra <code>https://localhost:8080</code>. El <code>rate limiting</code> de Nginx se deshabilitó para observar la capacidad real del stack de aplicación.</p>
+<h3>Resumen de métricas</h3>
+<table>
+<thead>
+<tr>
+<th>Test</th>
+<th>Carga</th>
+<th>Métricas clave</th>
+<th>Lectura breve</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Test 1 - Baseline</td>
+<td>1 VU · 30 s</td>
+<td>Avg 205 ms, p95 216 ms, 0 % fallos, 0,86 req/s</td>
+<td>Operación estable y predecible.</td>
+</tr>
+<tr>
+<td>Test 2 - Load</td>
+<td>50 VUs · 30 s</td>
+<td>Avg 296 ms, p95 471 ms, 0 % fallos, ~39 req/s</td>
+<td>Sigue en zona segura.</td>
+</tr>
+<tr>
+<td>Test 3 - Stress Ramp-up</td>
+<td>1→50→200→500→2000 VUs · 3 min</td>
+<td>Avg 23.448 ms, p95 30.011 ms, 77,6 % fallos, ~23 req/s</td>
+<td>Colapso por saturación a partir de 200 VUs.</td>
+</tr>
+<tr>
+<td>Test 5 - Full Session Journey</td>
+<td>1→10→50→100→500→2000 VUs · 3,75 min</td>
+<td>Fallo global ~40 %; login 69 % de fallos; search 0 %; logout 0 %</td>
+<td>El cuello de botella está en <code>loggueo-service</code>.</td>
+</tr>
+</tbody></table>
+<h3>5.1 Test 1 - Baseline</h3>
+<p><img src="./imgs/performance_report/performance_report-07.png" alt="Performance Test"></p>
+<p>Con carga mínima el sistema responde de forma estable y predecible. La latencia se mantiene alrededor de 205 ms, sin fallos, y el costo dominante sigue siendo la autenticación con bcrypt más la escritura en PostgreSQL.</p>
+<h3>5.2 Test 2 - Load</h3>
+<p><img src="./imgs/performance_report/performance_report-13.png" alt="Performance Test"></p>
+<p>Con 50 VUs el sistema sigue en zona segura: no hay errores y la latencia media sube solo a 296 ms. La variación sigue controlada, lo que indica que la arquitectura soporta carga concurrente moderada.</p>
+<h3>5.3 Test 3 - Stress Ramp-up</h3>
+<p><img src="./imgs/performance_report/performance_report-15.png" alt="Performance Test"></p>
+<p>La rampa de carga lleva al sistema al colapso cuando supera los 200 VUs. La latencia se acerca al timeout de 30 s y la tasa de fallos alcanza 77,6 %, confirmando saturación del servicio de autenticación.</p>
+<h3>5.4 Test 5 - Full Session Journey y Knee Point</h3>
+<p><img src="./imgs/performance_report/knee_point_chart_5.png" alt="Performance Test"></p>
+<p>El gráfico de knee point fue derivado del Test 5 (Full Session Journey), promediando la latencia de los cuatro pasos por bucket de VUs. La escala logarítmica permite visualizar simultáneamente la zona estable y el colapso.</p>
+<p><strong>Zona estable (≤ 50 VUs)</strong> — el sistema opera con latencia media de ~64 ms y 0 % de errores. Search y logout dominan el promedio ponderado en esta zona gracias a su baja latencia (57 ms y 35 ms respectivamente), mientras que login y /me se mantienen en su baseline normal. La estabilidad hasta 50 VUs concurrentes es coherente con los resultados del Test 2 (0 % de fallos a 50 VUs en el endpoint de login aislado).</p>
+<p><strong>Knee point (100 VUs)</strong> — el punto de inflexión se produce en 100 VUs con una señal severa: la latencia media sube un <strong>+5.573 %</strong> (de ~64 ms a ~2.414 ms) y los errores saltan al <strong>12 %</strong>. A diferencia del Test 3 donde el endpoint de login colapsó alrededor de 200 VUs con carga homogénea, en el journey completo el cuello de botella se hace evidente antes porque cada VU genera múltiples llamadas encadenadas al loggueo-service en el mismo intervalo de tiempo.</p>
+<p><strong>Colapso total (≥ 500 VUs)</strong> — con 400 VUs adicionales desde el knee point, la latencia satura en ~30.000 ms (el timeout del test) y los errores alcanzan el 100 %. Que la latencia se estabilice en el techo de 30 s desde los 500 VUs en adelante confirma que el sistema no está procesando ninguna petición de login; simplemente las deja expirar. El patrón es un <strong>cliff edge</strong>: el margen entre la zona de operación nominal y el colapso total es de apenas 50 VUs de diferencia (50→100 VUs).</p>
+<hr>
+<h3>5.5 Rendimiento y Escalabilidad</h3>
+<h4>Escenarios de rendimiento en el Prototipo 4</h4>
+<p>Las pruebas se ejecutaron sobre el stack completo de UN Wheels en <strong>Docker Desktop</strong> (host con 12 vCPU), accediendo vía <code>https://localhost:8080</code> (<code>rp-web</code>). Se deshabilitó temporalmente el rate limiting y el WAF para medir la capacidad real del stack. Suite automatizada en <code>FrontEnd/performance/</code> con <strong>k6</strong>.</p>
+<p><strong>Infraestructura de prueba:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Componente</th>
+<th>Especificación</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Orquestación</strong></td>
+<td>Docker Compose (<code>FrontEnd/docker-compose.yml</code>)</td>
+</tr>
+<tr>
+<td><strong>Balanceador de auth</strong></td>
+<td>HAProxy (<code>loggueo-lb</code>) + 3 réplicas <code>loggueo_1/2/3</code> (4 workers uvicorn c/u)</td>
+</tr>
+<tr>
+<td><strong>Búsqueda</strong></td>
+<td><code>route-search-service</code> (Go) + Redis (<code>search-redis</code>) + PostGIS</td>
+</tr>
+<tr>
+<td><strong>Herramienta</strong></td>
+<td>k6 v2.0</td>
+</tr>
+</tbody></table>
+<h5>Prueba de login aislado (<code>POST /api/auth/login</code>)</h5>
+<p>Flujo evaluado: <code>rp-web</code> → <code>web-app</code> → <code>api-gateway</code> → HAProxy → <code>loggueo_1/2/3</code>.</p>
+<div align="center">
+
+<p><img src="./imgs/performance_report/knee_point_login_simulado.png" alt="Rodilla de rendimiento — Login"></p>
+</div>
+
+<p>Bajo estas condiciones, el <strong>punto de rodilla</strong> se ubicó en <strong>300 usuarios concurrentes</strong>, con las siguientes métricas promedio:</p>
+<ul>
+<li>Rendimiento pico: <strong>118 req/s</strong></li>
+<li>Latencia p95: <strong>4.800 ms</strong></li>
+<li>Tasa de fallo: <strong>2 %</strong></li>
+</ul>
+<p>Para comparar, con <strong>10 usuarios</strong> (zona estable) el sistema reportó:</p>
+<ul>
+<li>Latencia media: <strong>~550 ms</strong></li>
+<li>Tasa de fallo: <strong>0 %</strong></li>
+<li>Rendimiento: <strong>~4,2 req/s</strong></li>
+</ul>
+<h5>Prueba de búsqueda aislada (<code>GET /api/search/routes</code>)</h5>
+<p>Al omitir el cuello de botella de autenticación (bcrypt) y medir solo el dominio de búsqueda con <strong>Cache-Aside</strong>, se logró:</p>
+<ul>
+<li>Completar la rampa hasta <strong>300 VUs</strong> sin fallos</li>
+<li>Latencia media estable: <strong>12–65 ms</strong> (1–50 VUs)</li>
+<li>Rendimiento sostenido: <strong>~216 req/s</strong> a 300 VUs</li>
+<li>Confirmar que <code>route-search-service</code> (Go + Redis) no es el componente limitante del sistema</li>
+</ul>
+<hr>
+<h3>Escenario 1 – Rendimiento del Servicio de Autenticación (Load Balancer Pattern)</h3>
+<ul>
+<li><strong>Source:</strong> Proceso masivo de login de estudiantes de la UNAL al inicio del semestre.</li>
+<li><strong>Stimulus:</strong> 300 requests de autenticación simultáneas llegan al sistema en un intervalo de 30 segundos, todas dirigidas a un único punto de entrada.</li>
+<li><strong>Environment:</strong> Producción en inicio de semestre; las tres réplicas activas y saludables. PostgreSQL compartida entre las tres instancias.</li>
+<li><strong>Response:</strong> HAProxy (<code>loggueo-lb</code>) distribuye las 300 requests entre las tres réplicas (<code>loggueo_1</code>, <code>loggueo_2</code>, <code>loggueo_3</code>) mediante algoritmo least-conn.</li>
+<li><strong>Response measure:</strong> Tiempo de respuesta promedio de login ≤ 300 ms bajo carga de 300 requests simultáneas.</li>
+</ul>
+<div align="center">
+
+<p><img src="./imgs/performance_report/Load_balancer_Pattern.png" alt="Escenario 1 — Load Balancer Pattern"></p>
+</div>
+
+
+<hr>
+<h3>Escenario 2 – Rendimiento del Patrón del Equipo (Cache-Aside en Búsqueda)</h3>
+<p>Durante el inicio de jornada académica, un alto volumen de estudiantes consulta rutas con parámetros geográficos similares. Sin caché, cada búsqueda ejecuta una query costosa sobre PostGIS; con <strong>Cache-Aside</strong>, las consultas repetitivas se resuelven desde Redis.</p>
+<div align="center">
+
+<p><img src="./imgs/performance_report/scenario2_team_pattern_performance.png" alt="Escenario 2 — Cache-Aside / búsqueda de rutas"></p>
+</div>
+
+<ul>
+<li><strong>Source:</strong> Ráfaga de búsquedas geoespaciales de estudiantes UNAL en hora pico (7:00–8:00 AM).</li>
+<li><strong>Stimulus:</strong> 200 peticiones <code>GET /api/search/routes</code> con parámetros similares en 60 s.</li>
+<li><strong>Artifact:</strong> <code>route-search-service</code> (Go) + Redis (<code>search-redis</code>) + PostGIS (<code>route-search-postgres</code>).</li>
+<li><strong>Environment:</strong> Producción simulada; syncer de rutas activo cada 60 s.</li>
+<li><strong>Response:</strong> El servicio consulta Redis antes de PostGIS; los cache hits se resuelven en memoria; los misses escriben en Redis con TTL 120 s.</li>
+<li><strong>Response measure:</strong> Latencia ≤ 150 ms en cache hits vs ≤ 900 ms en misses; tasa de hits ≥ 60 % en hora pico; 0 % de fallos hasta 300 VUs.</li>
+</ul>
+<p><strong>Nota:</strong> El escenario demuestra que el <strong>Cache-Aside Pattern</strong> aísla el rendimiento del dominio de búsqueda respecto a la saturación del servicio de autenticación.</p>
+<hr>
+<h3>Tácticas arquitectónicas aplicadas</h3>
+<table>
+<thead>
+<tr>
+<th>Táctica</th>
+<th>Aplicación en UN Wheels</th>
+<th>Patrón asociado</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Maintain Multiple Copies of Computations</strong></td>
+<td>Tres réplicas de <code>loggueo_service</code> detrás de HAProxy; 4 workers uvicorn por réplica</td>
+<td>Load Balancer, Service Replication</td>
+</tr>
+<tr>
+<td><strong>Introduce Concurrency</strong></td>
+<td>Goroutines en Go (search) y pool de workers en auth; microservicios aislados por dominio</td>
+<td>Load Balancer</td>
+</tr>
+<tr>
+<td><strong>Maintain Multiple Copies of Data (Caching)</strong></td>
+<td>Redis como caché de resultados de búsqueda (TTL 120 s, clave SHA-256)</td>
+<td>Cache-Aside</td>
+</tr>
+</tbody></table>
+<hr>
+<h3>Patrones arquitectónicos aplicados</h3>
+<table>
+<thead>
+<tr>
+<th>Patrón</th>
+<th>Componente</th>
+<th>Rol en rendimiento</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Load Balancer</strong></td>
+<td><code>loggueo-lb</code> (HAProxy, least-conn)</td>
+<td>Distribuye login entre 3 réplicas; health check activo <code>GET /readyz</code></td>
+</tr>
+<tr>
+<td><strong>Service Replication (Hot Spare)</strong></td>
+<td><code>loggueo_1/2/3</code></td>
+<td>Tres instancias activas; HAProxy excluye réplicas no listas</td>
+</tr>
+<tr>
+<td><strong>Cache-Aside</strong></td>
+<td><code>route-search-service</code> + <code>search-redis</code></td>
+<td>Consulta Redis antes de PostGIS; degradación elegante si Redis cae</td>
+</tr>
+</tbody></table>
+<hr>
+<h3>Análisis y resultados de las pruebas de rendimiento</h3>
+<table>
+<thead>
+<tr>
+<th>Prueba</th>
+<th>Carga</th>
+<th>Métricas clave</th>
+<th>Lectura</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Baseline login</td>
+<td>1 VU · 30 s</td>
+<td>~550 ms, 0 % fallos</td>
+<td>Operación estable; costo dominante: bcrypt + PostgreSQL</td>
+</tr>
+<tr>
+<td>Load login</td>
+<td>50 VUs · 30 s</td>
+<td>~2,8 s media, 0 % fallos</td>
+<td>Zona segura con LB + réplicas</td>
+</tr>
+<tr>
+<td>Rodilla login (modelo)</td>
+<td>50→500 VUs</td>
+<td>Pico 118 req/s a 300 VUs; 2 % fallos</td>
+<td>Saturación por CPU (bcrypt-bound)</td>
+</tr>
+<tr>
+<td>Load búsqueda</td>
+<td>100 VUs · 30 s</td>
+<td>~15 ms media, 0 % fallos</td>
+<td>Go + Redis muy por encima del login</td>
+</tr>
+<tr>
+<td>Rodilla búsqueda</td>
+<td>50→300 VUs</td>
+<td>~884 ms a 300 VUs, 0 % fallos</td>
+<td>Cache-Aside sostiene alta concurrencia</td>
+</tr>
+</tbody></table>
+<p><strong>Hallazgos principales:</strong></p>
+<ol>
+<li><strong>El login es el cuello de botella.</strong> Bcrypt es CPU-bound; con 12 vCPU saturados, la rodilla aparece ~300 VUs independientemente del balanceador.</li>
+<li><strong>El Load Balancer retrasa pero no elimina la saturación.</strong> HAProxy + 3 réplicas elevan el throughput de ~40 req/s (1 réplica) a ~118 req/s antes de degradar.</li>
+<li><strong>La búsqueda (Go) escala mejor.</strong> Sin autenticación en el camino crítico, <code>route-search-service</code> mantiene 0 % de fallos y latencias sub-centenario hasta 300 VUs gracias a goroutines y Redis.</li>
+<li><strong>Cache-Aside desacopla dominios.</strong> Usuarios que solo buscan rutas no se ven afectados por la saturación del servicio de auth.</li>
+</ol>
+<table>
+<thead>
+<tr>
+<th>Escenario</th>
+<th>Patrón</th>
+<th>Explicación</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Escenario 1 – Auth</td>
+<td>Load Balancer + Replication</td>
+<td>HAProxy reparte carga; 3 réplicas procesan en paralelo</td>
+</tr>
+<tr>
+<td>Escenario 2 – Búsqueda</td>
+<td>Cache-Aside</td>
+<td>Redis absorbe consultas repetitivas; PostGIS solo en misses</td>
+</tr>
+</tbody></table>
+<hr>
+<h3>5.6 Conclusiones</h3>
+<p><strong>1. El sistema aguanta bien la carga normal de producción.</strong> Hasta 250 VUs concurrentes en login el sistema opera con 0 % de fallos. La latencia media (~550 ms en baseline) es coherente con un endpoint que ejecuta bcrypt y escribe en PostgreSQL.</p>
+<p><strong>2. El search-service (Go) es el componente más robusto.</strong> Con 0 % de fallos y latencias de 12–65 ms hasta 300 VUs, demuestra que la arquitectura de microservicios aísla el rendimiento por dominio. Los usuarios que solo buscan rutas no se ven afectados por la saturación del auth.</p>
+<p><strong>3. El loggueo-service es el cuello de botella.</strong> La rodilla aparece ~300 VUs por el costo CPU de bcrypt. Mejoras puntuales: driver async (<code>asyncpg</code>), <code>create_login_log</code> en background y circuit breaker en el API Gateway.</p>
+<p><strong>4. Las pruebas en Docker Desktop tienen límite de hardware.</strong> Con 12 vCPU al ~95 % de uso, las rampas superiores a 300 VUs generan timeouts del host, no del diseño arquitectónico. La gráfica de rodilla modela el comportamiento esperado a partir de los tramos medidos.</p>
+<hr>
+<h2>6. Atributos de Calidad — Fiabilidad</h2>
+<p>Escenarios de fiabilidad (alta disponibilidad, resiliencia y tolerancia a fallos) del Prototipo 4.</p>
+<h3>Escenario 1 – Replication Pattern (Hot Spare en el Servicio de Autenticación)</h3>
+<p><img src="./imgs/replicationpattern.png" alt="Escenario 1 — Replication Pattern (Hot Spare)"></p>
+<ul>
+<li><strong>Source:</strong> Cualquier causa de indisponibilidad o degradación del componente de datos de (<code>loggueo_service</code>).</li>
+<li><strong>Stimulus:</strong> El nodo primario de un componente de datos deja de responder correctamente a operaciones de lectura, escritura, o ambas. En este caso, de una réplica (<code>loggueo_1</code>) por caída del proceso o indisponibilidad de red.</li>
+<li><strong>Artifact:</strong> Una réplica activa con tres instancias del servicio (<code>loggueo_1</code>, <code>loggueo_2</code>, <code>loggueo_3</code>) desplegadas en Docker Compose.</li>
+<li><strong>Environment:</strong> Operación normal del sistema en Docker Desktop. Sistema en producción con usuarios activos — el fallo ocurre bajo carga normal o pico</li>
+<li><strong>Response:</strong> HAProxy deja de enrutar tráfico a la réplica caída y redistribuye las peticiones de login hacia las réplicas sanas.</li>
+<li><strong>Response measure:</strong> El servicio vuelve a operar correctamente dentro del RTO definido por su nivel de criticidad, con pérdida de datos acotada al RPO del tipo de standby elegido, sin intervención manual y sin impacto visible en los demás servicios del sistema. El servicio permanece disponible sin interrupción perceptible para el usuario (0 errores visibles de login en la demo con 1 de 3 réplicas caídas).</li>
+</ul>
+<hr>
+<h3>Escenario 2 – Service Discovery Pattern (Punto de Entrada de Autenticación)</h3>
+<div align="center">
+
+<p><img src="./imgs/Service_Discovery_Pattern.png" alt="Escenario 2 — Service Discovery Pattern"></p>
+</div>
+
+<ul>
+<li><strong>Source:</strong> Servicio de autenticación (unwheels-auth / loggueo_service).</li>
+<li><strong>Stimulus:</strong> Llega una solicitud de autenticación (login) mientras una de las réplicas del servicio no está disponible.</li>
+<li><strong>Artifact (Artefacto):</strong> Punto de entrada lógico del servicio de autenticación expuesto al resto del sistema como loggueo-service, implementado mediante un balanceador de carga (HAProxy) que mantiene un pool de réplicas (loggueo_1, loggueo_2, loggueo_3). Es la capa que decide hacia qué instancia se envía cada petición de login proveniente del API Gateway.</li>
+<li><strong>Environment:</strong> Operación normal del sistema desplegado en Docker Compose.</li>
+<li><strong>Response:</strong> El mecanismo de descubrimiento de servicios identifica las réplicas disponibles, excluye la que falló y redirige la solicitud hacia una instancia sana del pool.</li>
+<li><strong>Response Measure:</strong> La autenticación se completa exitosamente sin que el cliente conozca qué réplica procesó la solicitud.</li>
+</ul>
+<p><strong>Verificación automatizada — <code>FrontEnd/reliability-tests/test_service_discovery.ps1</code>:</strong></p>
+<p>El script demuestra el patrón end-to-end ejecutando cinco fases:</p>
+<ol>
+<li><strong>Baseline</strong> — 30 logins contra <code>https://localhost:8080/api/auth/login</code> con el pool 3/3.</li>
+<li><strong>Caída controlada</strong> — <code>docker stop loggueo_1</code>; espera 25 s para que HAProxy aplique <code>fall 3 × inter 5s</code>.</li>
+<li><strong>Login degradado</strong> — 30 logins con pool 2/3; el test exige <strong>0 respuestas 5xx y 0 errores de red</strong>.</li>
+<li><strong>Restauración</strong> — <code>docker start loggueo_1</code>; espera 30 s para <code>rise 2 + start_period</code>.</li>
+<li><strong>Login post-recuperación</strong> — 30 logins con el pool 3/3 recompuesto.</li>
+</ol>
+<pre><code class="language-powershell">cd FrontEnd/reliability-tests
+./test_service_discovery.ps1
+</code></pre>
+<p>Salida resumida esperada (<code>401</code> es la respuesta correcta del backend ante una credencial inválida; lo crítico es que <strong>nunca aparezcan códigos <code>5xx</code> ni <code>ERR</code></strong>):</p>
+<pre><code>baseline (3/3)            401=30
+degraded (2/3)            401=30
+recovered (3/3)           401=30
+[OK] Service Discovery funcionando
+</code></pre>
+<p>Eventos correlacionados en HAProxy (<code>docker logs loggueo-lb</code>):</p>
+<pre><code>Server auth_pool/loggueo_1 is DOWN, reason: Layer4 timeout
+Server auth_pool/loggueo_1 is UP, reason: Layer7 check passed
+</code></pre>
+<hr>
+<h3>Escenario 3 – Cluster Pattern</h3>
+<p><img src="./imgs/reliability/ESCENARIO_RELIABILITY_3.png" alt="Escenario 3 — Cluster Pattern"></p>
+<ul>
+<li><strong>Source:</strong> Fallo de infraestructura física o lógica debido a un error de proceso, agotamiento de memoria (OOM kill), o desconexión de red en uno de los nodos del clúster.</li>
+<li><strong>Stimulus:</strong> La réplica del microservicio <code>routes-reservations-service</code> alojada en el nodo Worker o Manager termina de forma abrupta o el nodo se desconecta físicamente de la red local mientras la plataforma UN Wheels recibe peticiones concurrentes de usuarios buscando y reservando rutas.</li>
+<li><strong>Artifact:</strong> Tier de Lógica: Microservicio crítico <code>routes-reservations-service</code></li>
+<li><strong>Environment:</strong> Operación del prototipo en tiempo de ejecución bajo carga normal, configurado en un clúster distribuido asimétrico (Nodo Manager con la suite completa y Nodo Worker dedicado).</li>
+<li><strong>Response:</strong></li>
+</ul>
+<ol>
+<li><p>El motor de Docker Swarm detecta el fallo de cualquiera de las dos réplicas de routes-reservations-service a través de los health checks.</p>
+</li>
+<li><p>La Malla de Enrutamiento (<code>Ingress Routing Mesh</code>) de Swarm junto con el API Gateway aíslan inmediatamente la instancia afectada.</p>
+</li>
+<li><p>El 100% del tráfico de reservas se redirige de manera transparente hacia la réplica saludable sobreviviente. El usuario final experimenta continuidad absoluta en el servicio de rutas sin percibir downtime.</p>
+</li>
+</ol>
+<ul>
+<li><strong>Response measure:</strong> 0% de peticiones fallidas (errores HTTP 502/504) percibidas por los clientes de la aplicación móvil o web durante el proceso de transición. El tiempo de conmutación por error (failover) del tráfico hacia la réplica del Manager es menor a 1 segundo gracias a la capa de abstracción de red de Swarm. La detección y marcado de la instancia como unhealthy toma un máximo de 45 segundos (basado en el intervalo de 15s con 3 reintentos configurado en el Compose).</li>
+</ul>
+<hr>
+<h3>Escenario 4 – Heartbeat Pattern (Patrón del Equipo)</h3>
+<p><img src="./imgs/reliability/scenario_heartbeat.jpeg" alt="Escenario 4 — Heartbeat Pattern"></p>
+<ul>
+<li><strong>Source:</strong> Microservicios de negocio sin balanceador propio.</li>
+<li><strong>Stimulus:</strong> Un servicio deja de responder al endpoint de salud durante tres ciclos consecutivos de monitoreo.</li>
+<li><strong>Artifact:</strong> Componente <code>healthmon</code> (<code>FrontEnd/healthmon/monitor.js</code>) con polling cada 15 s y umbral de 3 fallos.</li>
+<li><strong>Environment:</strong> Operación normal del stack Docker.</li>
+<li><strong>Response:</strong> El monitor registra eventos <code>UNHEALTHY</code> / <code>RECOVERED</code> en logs y expone el estado en <code>GET /status</code> (puerto 9090). <strong>No</strong> modifica el enrutamiento de HAProxy.</li>
+<li><strong>Response measure:</strong> Fallo detectado en ≤ 3 × intervalo de check (45 s); el operador puede consultar el estado centralizado sin afectar el tráfico de producción.</li>
+</ul>
+<p><strong>Servicios monitoreados por Heartbeat:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Servicio</th>
+<th>URL</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>loggueo-lb</code></td>
+<td><code>http://loggueo-service:8000/healthz</code></td>
+</tr>
+<tr>
+<td><code>chat-service</code></td>
+<td><code>http://chat-service:3001/health</code></td>
+</tr>
+<tr>
+<td><code>routes-service</code></td>
+<td><code>http://routes-reservations-service:4000/health</code></td>
+</tr>
+<tr>
+<td><code>notifications-service</code></td>
+<td><code>http://notifications-service:3002/health</code></td>
+</tr>
+<tr>
+<td><code>search-service</code></td>
+<td><code>http://route-search-service:6000/health</code></td>
+</tr>
+</tbody></table>
+<p><strong>Verificación:</strong></p>
+<pre><code class="language-powershell">docker exec health-monitor wget -qO- http://127.0.0.1:9090/status
+docker logs health-monitor | Select-String &quot;UNHEALTHY|RECOVERED&quot;
+</code></pre>
+<hr>
+<h3>Tácticas arquitectónicas aplicadas (Fiabilidad)</h3>
+<h4>1. Redundant Spare</h4>
+<p><strong>Descripción:</strong> Mantiene instancias de repuesto listas para asumir carga cuando la instancia principal falla. En Hot Spare las réplicas están activas simultáneamente.</p>
+<p><strong>Aplicación:</strong> Escenario 1 — tres réplicas de <code>loggueo_service</code> actúan como Hot Spare; HAProxy redirige tráfico solo a réplicas sanas.</p>
+<p><strong>Patrón asociado:</strong> Service Replication Pattern, Hot Spare Pattern.</p>
+<h4>2. Recovery from Faults — Preparations and Repair</h4>
+<p><strong>Descripción:</strong> Establece mecanismos de detección y recuperación automática que redirigen peticiones a recursos disponibles cuando se detecta un fallo.</p>
+<p><strong>Aplicación:</strong> Escenario 2 — HAProxy ejecuta <code>httpchk</code> sobre <code>/readyz</code>, retira réplicas caídas del pool y las reincorpora tras <code>rise 2</code> checks exitosos.</p>
+<p><strong>Patrón asociado:</strong> Service Discovery Pattern.</p>
+<h4>3. Monitor Health Status</h4>
+<p><strong>Descripción:</strong> Supervisa periódicamente el estado de los componentes para detectar degradación antes de que impacte al usuario final.</p>
+<p><strong>Aplicación:</strong> Escenario 4 — <code>healthmon</code> observa microservicios sin LB; Docker healthcheck usa <code>/healthz</code> (liveness) en réplicas auth.</p>
+<p><strong>Patrón asociado:</strong> Heartbeat Pattern.</p>
+<h4>4. Stateful Replication</h4>
+<p><strong>Descripción:</strong></p>
+<p><strong>Aplicación:</strong></p>
+<p><strong>Patrón asociado:</strong></p>
+<h4>5. Active Redundancy (Stateless Replication)</h4>
+<p><strong>Descripción:</strong> múltiples instancias idénticas de un componente ejecutándose de manera simultánea y activa, compartiendo o balanceando la carga de trabajo. Dado que los componentes replicados no guardan estado local (Stateless), cualquier réplica sobreviviente puede procesar cualquier petición entrante de forma inmediata si otra instancia del pool falla, eliminando los puntos únicos de falla</p>
+<p><strong>Aplicación:</strong> Escenario 3 — Se despliegan dos réplicas activas del microservicio crítico <code>routes-reservations-service</code> distribuidas asimétricamente a través de la directiva placement.<code>max_replicas_per_node: 1</code> de Docker Swarm</p>
+<p><strong>Patrón asociado:</strong> Cluster Pattern</p>
+<hr>
+<h3>Patrones arquitectónicos aplicados (Fiabilidad)</h3>
+<h4>1. Service Replication Pattern</h4>
+<p>UN Wheels despliega múltiples instancias idénticas del servicio de autenticación, permitiendo procesamiento en paralelo y tolerancia a fallos parciales. Las tres réplicas comparten <code>auth-db</code> (PostgreSQL) y el mismo código de aplicación.</p>
+<h4>2. Hot Spare Pattern</h4>
+<p>Las réplicas <code>loggueo_1/2/3</code> están activas al mismo tiempo. Ante el fallo de una, las demás continúan atendiendo login sin activación manual de una réplica fría.</p>
+<h4>3. Service Discovery Pattern</h4>
+<p>El <code>api-gateway</code> resuelve el nombre lógico <code>loggueo-service:8000</code>. HAProxy es la <strong>única fuente de verdad</strong> para enrutamiento: <code>option httpchk GET /readyz</code> cada 5 s, <code>fall 3</code> / <code>rise 2</code>. No se utiliza Consul; es discovery server-side simplificado para Docker Compose.</p>
+<h4>4. Heartbeat Pattern</h4>
+<p><code>healthmon</code> centraliza observabilidad de servicios sin balanceador propio. Complementa — sin duplicar — el health check de HAProxy sobre las réplicas auth.</p>
+<h4>5. Cluster Pattern</h4>
+<p>UN Wheels configura un clúster distribuido multi-nodo asimétrico gestionado por Docker Swarm, Se aplica de forma selectiva sobre el microservicio core más crítico del negocio: <code>routes-reservations-service</code>. Mediante directivas de orquestación en el archivo de despliegue, el clúster inyecta redundancia activa balanceando la carga en paralelo entre ambos servidores físicos.</p>
+<hr>
+<h3>Relación entre Patrones Aplicados y Escenarios (Fiabilidad)</h3>
+<table>
+<thead>
+<tr>
+<th><strong>Escenario</strong></th>
+<th><strong>Patrón</strong></th>
+<th><strong>Explicación</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Escenario 1 – Replication (Hot Spare)</td>
+<td>Service Replication / Hot Spare</td>
+<td>Tres réplicas activas de auth; el fallo de una no derriba el servicio.</td>
+</tr>
+<tr>
+<td>Escenario 2 – Service Discovery</td>
+<td>Service Discovery Pattern</td>
+<td>HAProxy + DNS estable excluyen réplicas caídas del pool mediante httpchk activo.</td>
+</tr>
+<tr>
+<td>Escenario 3 – Cluster</td>
+<td>Cluster Pattern</td>
+<td>Dos replicas activas de routes-reservations-service` distribuidas en dos nodos.</td>
+</tr>
+<tr>
+<td>Escenario 4 – Heartbeat</td>
+<td>Heartbeat Pattern</td>
+<td><code>healthmon</code> detecta y registra fallos en servicios sin LB sin controlar el tráfico.</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>7. Prototipo</h2>
+<p><strong>Prerrequisitos:</strong> Docker Desktop ≥ 24.x, Git, <a href="https://github.com/FiloSottile/mkcert">mkcert</a>, puertos <strong>8080</strong>/<strong>8081</strong>.</p>
+<pre><code class="language-bash"># 1. Clonar (hermanos; compose en FrontEnd/)
+mkdir un-wheels &amp;&amp; cd un-wheels
+for r in FrontEnd api-gateway loggueo_service chat-service routes-reservations-service \
+  notifications-service search-service mobile security; do git clone https://github.com/UN-Wheels/$r.git; done
+
+# 2. TLS (security/reverse-proxies/certs/)
+mkcert -install &amp;&amp; cd security/reverse-proxies &amp;&amp; mkdir -p certs &amp;&amp; cd certs
+mkcert -cert-file rp-web.crt -key-file rp-web.key localhost 127.0.0.1 ::1
+mkcert -cert-file rp-mobile.crt -key-file rp-mobile.key localhost 127.0.0.1 ::1
+
+# 3. .env — FrontEnd/: JWT_SHARED_SECRET, FRONTEND_URL y NEXT_PUBLIC_API_URL → https://localhost:8080
+#           mobile/: API_BASE_URL=https://127.0.0.1:8081/api (ver .env.example)
+
+# 4. Levantar y verificar
+cd ../../../FrontEnd &amp;&amp; docker compose up --build -d
+# Web: https://localhost:8080 | API móvil: https://localhost:8081/api/auth/health
+# Flutter: cd mobile &amp;&amp; flutter pub get &amp;&amp; flutter run
+</code></pre>
+
+</body>
+</html>

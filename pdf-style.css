@@ -1,0 +1,268 @@
+/* ────────────────────────────────────────────────────────────────
+   UN Wheels — Estilo PDF para p4_2b.md
+   Sobrio, académico, alta legibilidad en impresión.
+   ──────────────────────────────────────────────────────────────── */
+
+@page {
+  size: A4;
+  margin: 22mm 18mm 22mm 18mm;
+}
+
+@page :first {
+  margin-top: 30mm;
+}
+
+body {
+  font-family: "Inter", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  font-size: 10.5pt;
+  line-height: 1.55;
+  color: #1f2328;
+  text-align: justify;
+  hyphens: auto;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Encabezados ───────────────────────────────────────────────── */
+h1, h2, h3, h4, h5, h6 {
+  font-family: "Inter", "Segoe UI", sans-serif;
+  font-weight: 700;
+  line-height: 1.25;
+  color: #0d1117;
+  page-break-after: avoid;
+  break-after: avoid;
+}
+
+h1 {
+  font-size: 26pt;
+  color: #8a1538;            /* Rojo UNAL */
+  text-align: center;
+  margin: 0 0 6pt 0;
+  letter-spacing: -0.5px;
+}
+
+h2 {
+  font-size: 18pt;
+  color: #8a1538;
+  border-bottom: 2px solid #8a1538;
+  padding-bottom: 4pt;
+  margin-top: 22pt;
+  margin-bottom: 10pt;
+  page-break-before: auto;
+}
+
+h3 {
+  font-size: 14pt;
+  color: #24292f;
+  margin-top: 16pt;
+  margin-bottom: 6pt;
+  border-left: 4px solid #8a1538;
+  padding-left: 8pt;
+}
+
+h4 {
+  font-size: 12pt;
+  color: #24292f;
+  margin-top: 12pt;
+  margin-bottom: 4pt;
+}
+
+h5, h6 {
+  font-size: 11pt;
+  color: #57606a;
+  margin-top: 10pt;
+}
+
+p {
+  margin: 0 0 8pt 0;
+  orphans: 3;
+  widows: 3;
+}
+
+/* ── Listas ────────────────────────────────────────────────────── */
+ul, ol {
+  margin: 4pt 0 8pt 0;
+  padding-left: 22pt;
+}
+
+li {
+  margin-bottom: 3pt;
+}
+
+li > p {
+  margin-bottom: 4pt;
+}
+
+/* ── Énfasis ───────────────────────────────────────────────────── */
+strong {
+  color: #0d1117;
+  font-weight: 700;
+}
+
+em {
+  color: #24292f;
+}
+
+/* ── Enlaces ───────────────────────────────────────────────────── */
+a {
+  color: #0969da;
+  text-decoration: none;
+  word-break: break-word;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* ── Código en línea y bloques ─────────────────────────────────── */
+code {
+  font-family: "JetBrains Mono", "Fira Code", "Cascadia Code", Consolas, "Courier New", monospace;
+  font-size: 9pt;
+  background: #f3f4f6;
+  color: #b91c1c;
+  padding: 1pt 4pt;
+  border-radius: 3pt;
+  border: 1px solid #e5e7eb;
+}
+
+pre {
+  background: #0d1117;
+  color: #e6edf3;
+  padding: 10pt 12pt;
+  border-radius: 5pt;
+  border: 1px solid #30363d;
+  overflow-x: auto;
+  font-size: 8.8pt;
+  line-height: 1.45;
+  margin: 8pt 0 12pt 0;
+  page-break-inside: avoid;
+  break-inside: avoid;
+}
+
+pre code {
+  background: transparent;
+  color: inherit;
+  border: none;
+  padding: 0;
+  font-size: 8.8pt;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* ── Citas ─────────────────────────────────────────────────────── */
+blockquote {
+  border-left: 4px solid #8a1538;
+  background: #fdf2f4;
+  padding: 6pt 12pt;
+  margin: 8pt 0;
+  color: #44232c;
+  font-style: italic;
+  border-radius: 0 4pt 4pt 0;
+  page-break-inside: avoid;
+}
+
+blockquote p {
+  margin: 0;
+}
+
+/* ── Tablas ────────────────────────────────────────────────────── */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 10pt 0 14pt 0;
+  font-size: 8.5pt;
+  line-height: 1.35;
+  table-layout: auto;           /* ancho de columna proporcional al contenido */
+  overflow-wrap: break-word;
+  page-break-inside: auto;      /* tablas largas pueden continuar en otra página */
+}
+
+th {
+  background: #8a1538;
+  color: #ffffff;
+  font-weight: 600;
+  text-align: left;
+  padding: 5pt 6pt;
+  border: 1px solid #6a0f29;
+  word-break: normal;
+  overflow-wrap: break-word;
+}
+
+td {
+  padding: 4pt 6pt;
+  border: 1px solid #d0d7de;
+  vertical-align: top;
+  word-break: normal;
+  overflow-wrap: break-word;
+}
+
+/* El código dentro de tablas no debe ensanchar la columna */
+td code, th code {
+  font-size: 7.8pt;
+  white-space: normal;
+  word-break: break-all;
+}
+
+tr:nth-child(even) td {
+  background: #f6f8fa;
+}
+
+thead {
+  display: table-header-group;  /* repite encabezado al partir tabla entre páginas */
+}
+
+tr {
+  page-break-inside: avoid;
+}
+
+/* ── Imágenes ──────────────────────────────────────────────────── */
+img {
+  display: block;
+  max-width: 78%;               /* no ocupan todo el ancho de la página */
+  max-height: 135mm;            /* caben holgadas en media página A4 */
+  width: auto;
+  height: auto;
+  margin: 12pt auto;
+  border-radius: 4pt;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
+  page-break-inside: avoid;
+  break-inside: avoid;
+}
+
+/* Logo de portada: pequeño y sin sombra */
+img[alt="Logo UN Wheels"] {
+  max-width: 110px;
+  max-height: 110px;
+  box-shadow: none;
+  margin: 8pt auto;
+}
+
+/* Capturas de pantalla / reportes de rendimiento: algo más anchas
+   porque suelen contener texto que debe seguir siendo legible */
+img[src*="performance_report"],
+img[src*="_test_"],
+img[src*="rate-limit"],
+img[src*="netseg"] {
+  max-width: 92%;
+  max-height: 150mm;
+}
+
+p:has(> img) {
+  text-align: center;
+}
+
+/* ── Separadores ───────────────────────────────────────────────── */
+hr {
+  border: none;
+  border-top: 1px solid #d0d7de;
+  margin: 14pt 0;
+}
+
+/* ── Numeración H2 (no en la portada) ──────────────────────────── */
+h2 {
+  page-break-before: auto;
+}
+
+/* Asegurar que tablas y bloques de código no se partan feo */
+table, pre, blockquote, img {
+  page-break-inside: avoid;
+}
